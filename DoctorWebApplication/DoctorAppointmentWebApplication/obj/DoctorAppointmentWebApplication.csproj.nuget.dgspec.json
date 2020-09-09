@@ -1,26 +1,21 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Git Projects\\DDAC\\DoctorWebApplication\\DoctorAppointmentWebApplication\\DoctorAppointmentWebApplication.csproj": {}
+    "D:\\DoctorApppointmentWebApplication\\DoctorWebApplication\\DoctorAppointmentWebApplication\\DoctorAppointmentWebApplication.csproj": {}
   },
   "projects": {
-    "D:\\Git Projects\\DDAC\\DoctorWebApplication\\DoctorAppointmentWebApplication\\DoctorAppointmentWebApplication.csproj": {
+    "D:\\DoctorApppointmentWebApplication\\DoctorWebApplication\\DoctorAppointmentWebApplication\\DoctorAppointmentWebApplication.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Git Projects\\DDAC\\DoctorWebApplication\\DoctorAppointmentWebApplication\\DoctorAppointmentWebApplication.csproj",
+        "projectUniqueName": "D:\\DoctorApppointmentWebApplication\\DoctorWebApplication\\DoctorAppointmentWebApplication\\DoctorAppointmentWebApplication.csproj",
         "projectName": "DoctorAppointmentWebApplication",
-        "projectPath": "D:\\Git Projects\\DDAC\\DoctorWebApplication\\DoctorAppointmentWebApplication\\DoctorAppointmentWebApplication.csproj",
-        "packagesPath": "C:\\Users\\Daniel Lucas\\.nuget\\packages\\",
-        "outputPath": "D:\\Git Projects\\DDAC\\DoctorWebApplication\\DoctorAppointmentWebApplication\\obj\\",
+        "projectPath": "D:\\DoctorApppointmentWebApplication\\DoctorWebApplication\\DoctorAppointmentWebApplication\\DoctorAppointmentWebApplication.csproj",
+        "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
+        "outputPath": "D:\\DoctorApppointmentWebApplication\\DoctorWebApplication\\DoctorAppointmentWebApplication\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Daniel Lucas\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\ASUS\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
@@ -43,9 +38,31 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[3.1.7, )"
+            },
+            "Microsoft.AspNetCore.Identity.UI": {
+              "target": "Package",
+              "version": "[3.1.7, )"
+            },
             "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation": {
               "target": "Package",
               "version": "[3.1.7, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[3.1.7, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[3.1.7, )"
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[3.1.4, )"
             }
           },
           "imports": [

@@ -6,20 +6,34 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using DoctorAppointmentWebApplication.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using DoctorAppointmentWebApplication.Areas.Identity.Data;
 
 namespace DoctorAppointmentWebApplication.Controllers
 {
+    [Authorize(Roles = "Patient")]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly UserManager<DoctorAppointmentWebApplicationUser> userManager;
+        /*private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
+        }*/
+
+        public HomeController(UserManager<DoctorAppointmentWebApplicationUser> userManager)
+        {
+            this.userManager = userManager;
         }
 
         public IActionResult Index()
         {
+            if (userManager != null)
+            {
+                ViewBag.userId = userManager.GetUserId(HttpContext.User);
+            }
             return View();
         }
 
