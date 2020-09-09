@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace DoctorAppointmentWebApplication.Controllers
 {
-    [Authorize]
     public class AdminController : Controller
     {
         private readonly RoleManager<IdentityRole> roleManager;
