@@ -1,0 +1,34 @@
+﻿
+@{
+    ViewData["Title"] = "ViewAppointment";
+}
+
+<h1>ViewAppointment</h1>
+
+<table border="1">
+    <tr>
+        <th>Patient Name :</th>
+        <th>Doctor Name :</th>
+        <th>Appointment Date :</th>
+        <th>Appointment Time :</th>
+    </tr>
+
+    @foreach (var patient in Model)
+    {
+        <tr>
+            <td>
+                @patient.CustomerName
+            </td>
+            <td>
+                @patient.DoctorName
+            </td>
+            <td>
+                @patient.AppointmentDate
+            </td>
+            <td>
+                @patient.AppointmentTime
+            </td>
+        </tr>
+     }
+</table>
+

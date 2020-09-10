@@ -104,8 +104,6 @@ namespace DoctorAppointmentWebApplication.Controllers
             CloudTable table = gettableinformation();
 
             string uniqueRowKey = Guid.NewGuid().ToString("N");
-
-
             AppointmentEntity patient = new AppointmentEntity(myUserID, uniqueRowKey);
             patient.CustomerName = myUserName;
             patient.DoctorName = myDoctorName;
@@ -159,6 +157,39 @@ namespace DoctorAppointmentWebApplication.Controllers
 
             return table;
 
+        }
+
+        public ActionResult ViewAppointment()
+        {
+            CloudTable appointmentTable = gettableinformation();
+            List<AppointmentEntity> patients = new List<AppointmentEntity>();
+            var userId = userManager.GetUserId(HttpContext.User);
+            var user = userManager.GetUserAsync(User);
+            var userName = user.Result.Name;
+            try
+            {
+                TableQuery<AppointmentEntity> query =
+                    new TableQuery<AppointmentEntity>()
+                    .Where(TableQuery.GenerateFilterCondition(("PartitionKey"), QueryComparisons.Equal, userId));
+                TableContinuationToken token = null;
+
+                do
+                {
+                    TableQuerySegment<AppointmentEntity> result = appointmentTable.ExecuteQuerySegmentedAsync(query, token).Result;
+                    token = result.ContinuationToken;
+
+                    foreach (AppointmentEntity patient in result.Results)
+                    {
+                        patients.Add(patient);
+                    }
+                }
+                while (token != null);
+            }
+            catch (Exception e)  
+            {
+                ViewBag.msg = "Error: " + e.ToString();
+            }
+            return View(patients);
         }
 
         public ActionResult CreateTable()

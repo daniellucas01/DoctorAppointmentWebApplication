@@ -22,7 +22,7 @@
                     <h5 class="card-title">@user.UserName</h5>
                 </div>
                 <div class="card-footer">
-                    <a asp-action="BookAppointment" asp-route-id="@user.Id" asp-route-name="@user.Name">Book Appointment</a>
+                    <a class = "btn btn-primary" asp-action="BookAppointment" asp-route-id="@user.Id" asp-route-name="@user.Name" >Book Appointment</a>
                     <a href="#" class="btn btn-danger">Edit</a>
                     <a href="#" class="btn btn-danger">Delete</a>
                 </div>
