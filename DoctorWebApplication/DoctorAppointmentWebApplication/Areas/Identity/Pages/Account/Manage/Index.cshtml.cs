@@ -47,7 +47,7 @@ namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = user.PhoneNumber
             };
         }
 

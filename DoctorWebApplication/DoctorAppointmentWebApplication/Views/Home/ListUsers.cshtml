@@ -1,0 +1,48 @@
+﻿@model IEnumerable<DoctorAppointmentWebApplication.Areas.Identity.Data.DoctorAppointmentWebApplicationUser>
+
+@{
+    ViewBag.Title = "All Users";
+}
+
+@if (Model.Any())
+{
+    <a class="btn-primary" style="width:auto" asp-controller="Home" asp-action="Index">
+        Back to page
+    </a>
+
+    foreach (var user in Model)
+    {
+        @if (user.Role.Equals("Doctor", StringComparison.InvariantCultureIgnoreCase))
+        {
+            <div class="card mb-3">
+                <div class="card-header">
+                    User Id : @user.Id
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">@user.UserName</h5>
+                </div>
+                <div class="card-footer">
+                    <a asp-action="BookAppointment" asp-route-id="@user.Id" asp-route-name="@user.Name">Book Appointment</a>
+                    <a href="#" class="btn btn-danger">Edit</a>
+                    <a href="#" class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        }
+    }
+}
+else
+{
+    <div class="card">
+        <div class="card-header">
+            No users created
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">
+                Use the button below to create a user
+            </h5>
+            <a class="btn-primary" style="width:auto" asp-controller="Home" asp-action="Index">
+                Back to page
+            </a>
+        </div>
+    </div>
+}
