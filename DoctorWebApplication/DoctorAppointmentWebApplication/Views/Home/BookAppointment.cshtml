@@ -3,7 +3,30 @@
 *@
 @{
 }
-Madona
-<p>
-    @ViewBag.DoctorData
-</p>
+
+@if (ViewBag.msg != null)
+{
+    <script>alert("@ViewBag.msg");</script>
+}
+
+<center>
+    <h1>Create Appointment</h1>
+
+    <form method="post" action="BookAppointment">
+        <p>Patient Name : @ViewBag.userName</p>
+        <p>Patient Number : @ViewBag.phoneNumber</p>
+        <p>Doctor Name : @ViewBag.DoctorName</p>
+        <p>Doctor ID : @ViewBag.DoctorId</p>
+        <input type="hidden" value="@ViewBag.userName" name="myUserName" />
+        <input type="hidden" value="@ViewBag.phoneNumber" name="myPhoneNumber" />
+        <input type="hidden" value="@ViewBag.DoctorName" name="myDoctorName" />
+        <input type="hidden" value="@ViewBag.DoctorId" name="myDoctorID" />
+        <input type="hidden" value="@ViewBag.userId" name="myUserID" />
+        <p>Enter Date : <input type="date" value="" name="myDate" required></p>
+        <p>Enter Time : <input type="time" value="" name="myTime" required></p>
+
+        <p><input type="submit" value="Submit" name="submit"></p>
+    </form>
+
+
+</center>

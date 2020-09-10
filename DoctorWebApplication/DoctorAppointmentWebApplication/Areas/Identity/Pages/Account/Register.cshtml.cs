@@ -114,7 +114,7 @@ namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account
                     Role = Input.Role
                 };
                 var result = await _userManager.CreateAsync(user, Input.Password);
-                if (result.Succeeded)
+                if (result.Succeeded) //here
                 {
                     if (Input.Role.Equals("Patient", StringComparison.InvariantCultureIgnoreCase))
                     {

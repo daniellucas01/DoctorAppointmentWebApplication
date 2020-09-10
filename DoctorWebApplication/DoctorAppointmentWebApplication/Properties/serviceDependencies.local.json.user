@@ -1,12 +1,16 @@
 {
   "dependencies": {
-    "mssql2": {
+    "storage1": {
       "restored": true,
-      "restoreTime": "2020-09-09T18:02:23.2966871Z"
+      "restoreTime": "2020-09-10T10:38:26.7047445Z"
     },
     "secrets1": {
       "restored": true,
       "restoreTime": "2020-09-09T18:01:20.0707409Z"
+    },
+    "mssql2": {
+      "restored": true,
+      "restoreTime": "2020-09-09T18:02:23.2966871Z"
     },
     "mssql1": {
       "restored": true,
@@ -15,6 +19,14 @@
   },
   "parameters": {
     "mssql2.subscriptionId": {
+      "Type": "subscription",
+      "Value": "8db63fff-dcd5-421f-b5cc-9e28aedd1c71"
+    },
+    "storage1.resourceGroupName": {
+      "Type": "resourceGroup",
+      "Value": "assignmentDDAC"
+    },
+    "storage1.subscriptionId": {
       "Type": "subscription",
       "Value": "8db63fff-dcd5-421f-b5cc-9e28aedd1c71"
     },

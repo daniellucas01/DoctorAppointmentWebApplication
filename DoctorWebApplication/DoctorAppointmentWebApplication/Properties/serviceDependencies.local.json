@@ -12,6 +12,12 @@
       "type": "mssql.azure",
       "connectionId": "DoctorAppointmentWebApplicationContextConnection",
       "secretStore": "LocalSecretsFile"
+    },
+    "storage1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/doctorappointmentwebappl",
+      "type": "storage.azure",
+      "connectionId": "tablestorageconnection",
+      "secretStore": "LocalSecretsFile"
     }
   }
 }
