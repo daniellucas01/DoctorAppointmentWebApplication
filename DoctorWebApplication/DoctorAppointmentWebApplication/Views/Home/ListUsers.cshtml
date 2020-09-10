@@ -6,10 +6,6 @@
 
 @if (Model.Any())
 {
-    <a class="btn-primary" style="width:auto" asp-controller="Home" asp-action="Index">
-        Back to page
-    </a>
-
     foreach (var user in Model)
     {
         @if (user.Role.Equals("Doctor", StringComparison.InvariantCultureIgnoreCase))
