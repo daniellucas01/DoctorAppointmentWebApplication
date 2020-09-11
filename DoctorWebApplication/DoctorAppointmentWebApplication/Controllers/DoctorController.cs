@@ -14,7 +14,7 @@ using DoctorAppointmentWebApplication.Models;
 
 namespace DoctorAppointmentWebApplication.Controllers
 {
-    public class PublishAppointment : Controller
+    public class DoctorController : Controller
 
         //INI CONTROLLER BUAT DOKTER (PUBLISHING ) NANTI KASIH AUTHORIZATION SAMA KAYAK HOME CONTROLLER --> ALGO PART
     {
@@ -46,7 +46,7 @@ namespace DoctorAppointmentWebApplication.Controllers
 
         }
 
-        public PublishAppointment(UserManager<DoctorAppointmentWebApplicationUser> userManager, DoctorAppointmentWebApplicationContext application)
+        public DoctorController(UserManager<DoctorAppointmentWebApplicationUser> userManager, DoctorAppointmentWebApplicationContext application)
         {
             this.userManager = userManager;
             this._application = application;
@@ -72,19 +72,24 @@ namespace DoctorAppointmentWebApplication.Controllers
             CloudTable table = GetTableInformation();
 
             string uniqueRowKey = Guid.NewGuid().ToString("N");
+
+            var utcDate = DateTime.SpecifyKind(myDate, DateTimeKind.Utc);
+            var utcTime = DateTime.SpecifyKind(myTime, DateTimeKind.Utc);
+
             AppointmentEntity insertTable = new AppointmentEntity("Appointment", uniqueRowKey);
             insertTable.PatientID = "None";
             insertTable.DoctorID = myUserID;
             insertTable.PatientName = "None";
             insertTable.DoctorName = myUserName;
-            insertTable.AppointmentDate = myDate;
-            insertTable.AppointmentTime = myTime;
+            insertTable.AppointmentDate = utcDate;
+            insertTable.AppointmentTime = utcTime;
             insertTable.PatientNumber = "None";
-            insertTable.DoctorNumber = myPhoneNumber; 
+            insertTable.DoctorNumber = myPhoneNumber;
+            insertTable.CreatedBy = "Doctor";
             try
             {
                 TableOperation tableOperation = TableOperation.Insert(insertTable);
-                TableResult result = table.ExecuteAsync(tableOperation).Result;//toshows the result to the front-end
+                TableResult result = table.ExecuteAsync(tableOperation).Result; // Toshows the result to the front-end
                 table.ExecuteAsync(tableOperation);
                 ViewBag.TableName = table.Name;
                 ViewBag.msg = "Insert Success!";

@@ -71,6 +71,7 @@ namespace DoctorAppointmentWebApplication.Controllers
             string text = "Doctor Data = ";
             /*string id = "";*/
             string name = "";
+            string doctorPhoneNumber = "";
             /*if (!String.IsNullOrEmpty(RouteData.Values["id"].ToString()))
             {
                 id = HttpContext.Request.Query["id"];
@@ -79,10 +80,15 @@ namespace DoctorAppointmentWebApplication.Controllers
             {
                 name = HttpContext.Request.Query["name"];
             }
-            ViewBag.DoctorData = text + " " + id + " name = " + name;
+            if (!String.IsNullOrEmpty(HttpContext.Request.Query["phone-number"]))
+            {
+                doctorPhoneNumber = HttpContext.Request.Query["phone-number"];
+            }
+            ViewBag.DoctorData = text + " " + id + " name = " + name + " Phone Number : " + doctorPhoneNumber;
 
             ViewBag.DoctorName = name;
             ViewBag.DoctorId = id;
+            ViewBag.DoctorPhoneNumber = doctorPhoneNumber;
             if (userManager != null)
             {
                 var userId = userManager.GetUserId(HttpContext.User);
@@ -97,7 +103,7 @@ namespace DoctorAppointmentWebApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult BookAppointment(string myDoctorName,string myDoctorID, string myUserName, string myUserID, string myPhoneNumber, DateTime myDate, DateTime myTime)
+        public IActionResult BookAppointment(string myDoctorName,string myDoctorID, string myUserName, string myUserID, string myPhoneNumber, DateTime myDate, DateTime myTime, string myDoctorPhoneNumber)
         {
             CloudTable table = GetTableInformation();
 
@@ -107,12 +113,15 @@ namespace DoctorAppointmentWebApplication.Controllers
             patient.DoctorID = myDoctorID;
             patient.PatientName = myUserName;
             patient.DoctorName = myDoctorName;
+            patient.DoctorNumber = myDoctorPhoneNumber;
+            patient.PatientNumber = myPhoneNumber;
+            patient.CreatedBy = "Patient";
+
+            // Specify the Time Zone to prevent Table Storage to convert the Date Time to UTC
             var utcDate = DateTime.SpecifyKind(myDate, DateTimeKind.Utc); 
             var utcTime = DateTime.SpecifyKind(myTime, DateTimeKind.Utc);
             patient.AppointmentDate = utcDate;
             patient.AppointmentTime = utcTime;
-            patient.PatientNumber = myPhoneNumber;
-            patient.DoctorNumber = "123456"; //Hard Code number (needs to change) -> algo part
             try
             {
                 TableOperation tableOperation = TableOperation.Insert(patient);
@@ -194,27 +203,65 @@ namespace DoctorAppointmentWebApplication.Controllers
             return View(patients);
         }
 
-        
-        public ActionResult DeleteAppointment(string userid, string rowkey) 
+        public async Task<ActionResult> DeleteAppointmentAsync(string userid) 
         {
+            string rowkey = "";
+            string createdBy = "";
             Trace.WriteLine("Delete is clicked");
             if (!String.IsNullOrEmpty(HttpContext.Request.Query["rowkey"]))
             {
                 rowkey = HttpContext.Request.Query["rowkey"];
             }
-            Trace.WriteLine(userid + " " + rowkey);
-            CloudTable appointmentTable = GetTableInformation();
-            TableOperation deleteAction = TableOperation.Delete(new AppointmentEntity(userid, rowkey) {ETag = "*"});
-            TableResult deleteResult = appointmentTable.ExecuteAsync(deleteAction).Result;
-            var msg = "";
-
-            if (deleteResult.HttpStatusCode == 204)
+            if (!String.IsNullOrEmpty(HttpContext.Request.Query["created-by"]))
             {
-                msg = "Delete Succesfully";
+                createdBy = HttpContext.Request.Query["created-by"];
             }
-            else 
+            Trace.WriteLine("Used Id = "+userid + " Rowkey = " + rowkey);
+
+            CloudTable appointmentTable = GetTableInformation();
+            var msg = "";
+            if (createdBy.Equals("Patient", StringComparison.InvariantCultureIgnoreCase))
             {
-                msg = "Delete Failed";
+                TableOperation deleteAction = TableOperation.Delete(new AppointmentEntity("Appointment", rowkey) { ETag = "*" });
+                TableResult deleteResult = appointmentTable.ExecuteAsync(deleteAction).Result;
+
+                if (deleteResult.HttpStatusCode == 204)
+                {
+                    msg = "Delete Succesfully";
+                }
+                else
+                {
+                    msg = "Delete Failed Created By Patient";
+                }
+            }
+            else
+            {
+                // Create a retrieve operation that takes a item entity
+                TableOperation retrieveOperation = TableOperation.Retrieve<AppointmentEntity>("Appointment", rowkey);
+                //Execute the operation
+                TableResult retrievedResult = await appointmentTable.ExecuteAsync(retrieveOperation);
+
+                // Assign the result to a Item object.
+                AppointmentEntity updateEntity = (AppointmentEntity)retrievedResult.Result;
+
+                if (updateEntity != null)
+                {
+                    //Change the Id, Name, and Telephone Number of the Patient
+                    updateEntity.PatientID = "None";
+                    updateEntity.PatientName = "None";
+                    updateEntity.PatientNumber = "None";
+                    // Create the InsertOrReplace TableOperation
+                    TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);
+
+                    // Execute the operation.
+                    await appointmentTable.ExecuteAsync(insertOrReplaceOperation);
+                    Trace.WriteLine("Entity was updated.");
+                    msg = "Delete Succesfully";
+                }
+                else
+                {
+                    msg = "Delete Failed By Doctor";
+                }
             }
             return RedirectToAction("ViewAppointment", "Home", new {msg});
         }
@@ -232,9 +279,25 @@ namespace DoctorAppointmentWebApplication.Controllers
             return View(); // comes out with the interface
         }
 
-        public ActionResult ViewPublishAppointment()
+        public ActionResult ViewPublishAppointment(string id) // id = DoctorId
         {
             CloudTable appointmentTable = GetTableInformation();
+            string doctorName = "";
+            string phoneNumber = "";
+            if (!String.IsNullOrEmpty(HttpContext.Request.Query["name"]))
+            {
+                doctorName = HttpContext.Request.Query["name"];
+            }
+            if (!String.IsNullOrEmpty(HttpContext.Request.Query["phone-number"]))
+            {
+                phoneNumber = HttpContext.Request.Query["phone-number"];
+            }
+            ViewBag.doctorId = id;
+            ViewBag.doctorName = doctorName;
+            ViewBag.phoneNumber = phoneNumber;
+            Trace.WriteLine(id);
+            Trace.WriteLine(doctorName);
+            Trace.WriteLine(phoneNumber);
             List<AppointmentEntity> appointments = new List<AppointmentEntity>();
             var userId = userManager.GetUserId(HttpContext.User);
             var user = userManager.GetUserAsync(User);
@@ -243,7 +306,10 @@ namespace DoctorAppointmentWebApplication.Controllers
             {
                 TableQuery<AppointmentEntity> query =
                     new TableQuery<AppointmentEntity>()
-                    .Where(TableQuery.GenerateFilterCondition(("PatientID"), QueryComparisons.Equal, "None"));
+                    .Where(TableQuery.CombineFilters(TableQuery.GenerateFilterCondition("PatientID", QueryComparisons.Equal, "None"),
+                           TableOperators.And,
+                           TableQuery.GenerateFilterCondition("DoctorID", QueryComparisons.Equal, id)));
+
                 TableContinuationToken token = null;
 
                 do
