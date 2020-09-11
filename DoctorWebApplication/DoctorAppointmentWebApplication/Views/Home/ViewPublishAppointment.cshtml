@@ -7,43 +7,41 @@
 <h1>View Publish Appointment</h1>
 
 <!--This View is for Published appointments, Usage : Users, Intention: to view the published appointments from doctor-->
-
-<table border="1">
-    <tr>
-        <th>Doctor Name :</th>
-        <th>Doctor Number :</th>
-        <th>Appointment Date :</th>
-        <th>Appointment Time :</th>
-
-
-    </tr>
-
-    @foreach (var appointment in Model)
-    {
+@if (Model.Any())
+{
+    <table border="1">
         <tr>
-            <td>
-                @appointment.DoctorName
-            </td>
-            <td>
-                @appointment.DoctorNumber
-            </td>
-            <td>
-                @appointment.AppointmentDate
-            </td>
-            <td>
-                @appointment.AppointmentTime
-            </td>
-            <td>
-                <form asp-action="UpdatePublished" asp-route-id="@appointment.PartitionKey" asp-route-rowkey="@appointment.RowKey"><button class="btn btn-danger" type="submit">Delete Appointment</button></form>
-            </td>
-
+            <th>Doctor Name :</th>
+            <th>Doctor Number :</th>
+            <th>Appointment Date :</th>
+            <th>Appointment Time :</th>
 
 
         </tr>
 
-    }
-
-
-
-</table>
-
+        @foreach (var appointment in Model)
+        {
+            <tr>
+                <td>
+                    @appointment.DoctorName
+                </td>
+                <td>
+                    @appointment.DoctorNumber
+                </td>
+                <td>
+                    @appointment.AppointmentDate
+                </td>
+                <td>
+                    @appointment.AppointmentTime
+                </td>
+                <td>
+                    <form asp-action="UpdatePublished" asp-route-id="@appointment.PartitionKey" asp-route-rowkey="@appointment.RowKey"><button class="btn btn-danger" type="submit">Book Appointment</button></form>
+                </td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <a class="btn btn-primary" asp-action="BookAppointment" asp-route-id="@ViewBag.doctorId" asp-route-name="@ViewBag.doctorName" asp-route-phone-number="@ViewBag.phoneNumber">Book Appointment</a>
+}

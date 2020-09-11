@@ -21,7 +21,7 @@
                                 <h5 class="card-title">@user.Name</h5>
                                 <p class="card-text">Doctor at Intelligent Hospital</p>
                                 <p class="card-text">@user.PhoneNumber</p>
-                                <a class="btn btn-primary" asp-action="BookAppointment" asp-route-id="@user.Id" asp-route-name="@user.Name">Book Appointment</a>
+                                <a class="btn btn-primary" asp-action="ViewPublishAppointment" asp-route-id="@user.Id" asp-route-name="@user.Name" asp-route-phone-number="@user.PhoneNumber">Book Appointment</a>
                             </div>
                         </div>
                     </div>

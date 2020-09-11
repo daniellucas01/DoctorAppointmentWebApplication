@@ -27,7 +27,7 @@ namespace DoctorAppointmentWebApplication.Models
         public string DoctorName { get; set; }
         public string PatientNumber { get; set; }
         public string DoctorNumber { get; set; }
-
+        public string CreatedBy { get; set; }
 
     }
 }
