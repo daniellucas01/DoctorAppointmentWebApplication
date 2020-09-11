@@ -1,0 +1,48 @@
+﻿@model DoctorAppointmentWebApplication.Models.AppointmentEntity
+
+@{
+    ViewData["Title"] = "EditAppointment";
+}
+
+<h1>EditAppointment</h1>
+
+<h4>AppointmentEntity</h4>
+@ViewBag.partitionkey
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditAppointment" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="AppointmentDate" class="control-label"></label>
+                <input asp-for="AppointmentDate" class="form-control" value="@ViewBag.date"/>
+                <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AppointmentTime" class="control-label"></label>
+                <input asp-for="AppointmentTime" class="form-control" value="@ViewBag.time"/>
+                <span asp-validation-for="AppointmentTime" class="text-danger"></span>
+            </div>
+   
+            <div class="form-group">
+                <label asp-for="PartitionKey" class="control-label"></label>
+                <input asp-for="PartitionKey" class="form-control" />
+                <span asp-validation-for="PartitionKey" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RowKey" class="control-label"></label>
+                <input asp-for="RowKey" class="form-control" />
+                <span asp-validation-for="RowKey" class="text-danger"></span>
+            </div>
+           
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
