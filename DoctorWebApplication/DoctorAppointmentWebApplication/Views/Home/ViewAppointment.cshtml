@@ -17,6 +17,13 @@
                 <h7 class="card-title">@patient.AppointmentDate</h7>
             </div>
             <div class="card-footer">
+                @*<form asp-action="EditAppointment" method="get">
+                    <input type="hidden" name="partitionkey" value="@patient.PartitionKey" />
+                    <input type="hidden" name="rowkey" value="@patient.RowKey" />
+                    <input type="hidden" name="date" value="@patient.AppointmentDate" />
+                    <input type="hidden" name="time" value="@patient.AppointmentTime" />
+                    <input type="submit" value="Submit" class="btn btn-success">
+                </form>*@
                 <a type="button" asp-action="EditAppointment" asp-route-id="@patient.PartitionKey" asp-route-rowkey="@patient.RowKey" class="btn btn-success">Edit</a>
                 <!-- Trigger the modal with a button -->
                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete</button>
@@ -38,39 +45,39 @@
                                     var parititonKey = patient.PartitionKey;
                                     var rowKey = patient.RowKey;
                                     var deleteParam = new Dictionary<string, string>
-                                    {
+                                                    {
                                         {"UserId", parititonKey},
                                         {"RowKey", rowKey}
                                     };
                                 }
-                                <form asp-action="DeleteAppointment" asp-route-userid="@patient.PartitionKey" asp-route-rowkey="@patient.RowKey" ><button class="btn btn-danger" type="submit">Delete Appointment</button></form>
+                                <form asp-action="DeleteAppointment" asp-route-userid="@patient.PartitionKey" asp-route-rowkey="@patient.RowKey"><button class="btn btn-danger" type="submit">Delete Appointment</button></form>
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                @*@if (ViewBag.msg != null) { 
-                    <div class="modal fade" id="deleteStatusModal" tabindex="-1" role="dialog">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="deleteStatusModalLabel">@ViewBag.msg</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <script>
-                        $(function() {
-                        $("#deleteStatusModal ").dialog();
-                        });
-                    </script>
-                 }*@
+                @*@if (ViewBag.msg != null) {
+           <div class="modal fade" id="deleteStatusModal" tabindex="-1" role="dialog">
+               <div class="modal-dialog" role="document">
+                   <div class="modal-content">
+                       <div class="modal-header">
+                           <h5 class="modal-title" id="deleteStatusModalLabel">@ViewBag.msg</h5>
+                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                               <span aria-hidden="true">&times;</span>
+                           </button>
+                       </div>
+                       <div class="modal-footer">
+                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+                       </div>
+                   </div>
+               </div>
+           </div>
+           <script>
+               $(function() {
+               $("#deleteStatusModal ").dialog();
+               });
+           </script>
+        }*@
             </div>
         </div>
     }

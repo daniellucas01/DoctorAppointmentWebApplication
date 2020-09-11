@@ -264,6 +264,46 @@ namespace DoctorAppointmentWebApplication.Controllers
 
             return View(updateEntity);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> EditAppointmentAsync(string PartitionKey, string RowKey, DateTime AppointmentDate, DateTime AppointmentTime)
+        {
+            bool hasChanged = false;
+            CloudTable table = GetTableInformation();
+
+            // Create a retrieve operation that takes a item entity
+            TableOperation retrieveOperation = TableOperation.Retrieve<AppointmentEntity>(PartitionKey, RowKey);
+            //Execute the operation
+            TableResult retrievedResult = await table.ExecuteAsync(retrieveOperation);
+
+            // Assign the result to a Item object.
+            AppointmentEntity updateEntity = (AppointmentEntity)retrievedResult.Result;
+
+            if (updateEntity != null)
+            {
+                //Change the description
+                if (updateEntity.AppointmentDate != AppointmentDate && updateEntity.AppointmentTime != AppointmentTime)
+                {
+                    hasChanged = true;
+                }
+                if (hasChanged)
+                {
+                    updateEntity.AppointmentDate = AppointmentDate;
+                    updateEntity.AppointmentTime = AppointmentTime;
+                    // Create the InsertOrReplace TableOperation
+                    TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);
+
+                    // Execute the operation.
+                    await table.ExecuteAsync(insertOrReplaceOperation);
+                    Trace.WriteLine("Entity was updated.");
+                }
+                else
+                {
+                    Trace.WriteLine("No Changes");
+                }
+            }
+            return View();
+        }
         
        /* public ActionResult CreateTableProcess(string myDoctorID, string myDoctorName, string myUserName, string myUserID,string myPhoneNumber, DateTime myDate, DateTime myTime)
         {
