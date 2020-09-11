@@ -97,17 +97,20 @@ namespace DoctorAppointmentWebApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult BookAppointment(string myDoctorName, string myUserName, string myUserID, string myPhoneNumber, DateTime myDate, DateTime myTime)
+        public IActionResult BookAppointment(string myDoctorName,string myDoctorID, string myUserName, string myUserID, string myPhoneNumber, DateTime myDate, DateTime myTime)
         {
             CloudTable table = GetTableInformation();
 
             string uniqueRowKey = Guid.NewGuid().ToString("N");
-            AppointmentEntity patient = new AppointmentEntity(myUserID, uniqueRowKey);
-            patient.CustomerName = myUserName;
+            AppointmentEntity patient = new AppointmentEntity("Appointment", uniqueRowKey);
+            patient.PatientID = myUserID;
+            patient.DoctorID = myDoctorID;
+            patient.PatientName = myUserName;
             patient.DoctorName = myDoctorName;
             patient.AppointmentDate = myDate;
             patient.AppointmentTime = myTime;
             patient.PatientNumber = myPhoneNumber;
+            patient.DoctorNumber = "123456"; //Hard Code number (needs to change) -> algo part
             try
             {
                 TableOperation tableOperation = TableOperation.Insert(patient);
@@ -117,7 +120,6 @@ namespace DoctorAppointmentWebApplication.Controllers
                 ViewBag.TableName = table.Name;
                 ViewBag.msg = "Insert Success!";
                 return RedirectToAction("ListUsers", "Home");
-                /*RedirectToAction("Home", "Index");*/ //Problem. Redirect to Home.
             }
             catch (Exception ex)
             {
@@ -168,7 +170,7 @@ namespace DoctorAppointmentWebApplication.Controllers
             {
                 TableQuery<AppointmentEntity> query =
                     new TableQuery<AppointmentEntity>()
-                    .Where(TableQuery.GenerateFilterCondition(("PartitionKey"), QueryComparisons.Equal, userId));
+                    .Where(TableQuery.GenerateFilterCondition(("PatientID"), QueryComparisons.Equal, userId));
                 TableContinuationToken token = null;
 
                 do
@@ -228,8 +230,8 @@ namespace DoctorAppointmentWebApplication.Controllers
             return View(); // comes out with the interface
         }
 
-        //inputting dynamically
-        public ActionResult CreateTableProcess(string myDoctorID, string myDoctorName, string myUserName, string myUserID,string myPhoneNumber, DateTime myDate, DateTime myTime)
+        
+       /* public ActionResult CreateTableProcess(string myDoctorID, string myDoctorName, string myUserName, string myUserID,string myPhoneNumber, DateTime myDate, DateTime myTime)
         {
             CloudTable table = GetTableInformation();
 
@@ -257,7 +259,7 @@ namespace DoctorAppointmentWebApplication.Controllers
 
             return View();
         }
-        
+        */
 
 
 

@@ -14,16 +14,19 @@ namespace DoctorAppointmentWebApplication.Models
             //blank 
         }
 
-        public AppointmentEntity(string CustomerID, string DoctorID)
+        public AppointmentEntity(string AppointmentType, string UniqueID)
         {
-            this.PartitionKey = CustomerID;
-            this.RowKey = DoctorID;
+            this.PartitionKey = AppointmentType;
+            this.RowKey = UniqueID;
         }
         public DateTime AppointmentDate { get; set; }
         public DateTime AppointmentTime { get; set; }
-        public string CustomerName { get; set; }
+        public string PatientID { get; set; }
+        public string DoctorID { get; set; }
+        public string PatientName { get; set; }
         public string DoctorName { get; set; }
         public string PatientNumber { get; set; }
+        public string DoctorNumber { get; set; }
 
 
     }
