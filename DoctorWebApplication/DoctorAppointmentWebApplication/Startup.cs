@@ -33,6 +33,7 @@ namespace DoctorAppointmentWebApplication
             services.AddDefaultIdentity<DoctorAppointmentWebApplicationUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<DoctorAppointmentWebApplicationContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddMvc().AddControllersAsServices();
             services.AddAzureClients(builder =>
             {
                 builder.AddBlobServiceClient(Configuration["ConnectionStrings:tablestorageconnection:blob"], preferMsi: true);

@@ -17,5 +17,7 @@ namespace DoctorAppointmentWebApplication.Areas.Identity.Data
         public string PhoneNumber { get; set; }
         [PersonalData]
         public string Role { get; set; }
+        [PersonalData]
+        public string ImageURL { get; set; }
     }
 }
