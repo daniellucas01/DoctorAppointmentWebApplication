@@ -230,6 +230,88 @@ namespace DoctorAppointmentWebApplication.Controllers
             return View(); // comes out with the interface
         }
 
+        public ActionResult ViewPublishAppointment()
+        {
+            CloudTable appointmentTable = GetTableInformation();
+            List<AppointmentEntity> appointments = new List<AppointmentEntity>();
+            var userId = userManager.GetUserId(HttpContext.User);
+            var user = userManager.GetUserAsync(User);
+            var userName = user.Result.Name;
+            try
+            {
+                TableQuery<AppointmentEntity> query =
+                    new TableQuery<AppointmentEntity>()
+                    .Where(TableQuery.GenerateFilterCondition(("PatientID"), QueryComparisons.Equal, "None"));
+                TableContinuationToken token = null;
+
+                do
+                {
+                    TableQuerySegment<AppointmentEntity> result = appointmentTable.ExecuteQuerySegmentedAsync(query, token).Result;
+                    token = result.ContinuationToken;
+
+                    foreach (AppointmentEntity appointment in result.Results)
+                    {
+                        appointments.Add(appointment);
+                    }
+                }
+                while (token != null);
+            }
+            catch (Exception e)
+            {
+                ViewBag.msg = "Error: " + e.ToString();
+            }
+            return View(appointments);
+
+
+
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdatePublishedAsync(string id)
+        {
+            string rowkey = "";
+            if (!String.IsNullOrEmpty(HttpContext.Request.Query["rowkey"]))
+            {
+                rowkey = HttpContext.Request.Query["rowkey"];
+            }
+            Trace.WriteLine("PartitionKey" + id);
+            Trace.WriteLine("Rowkey" + rowkey);
+
+            CloudTable table = GetTableInformation();
+
+            // Create a retrieve operation that takes a item entity
+            TableOperation retrieveOperation = TableOperation.Retrieve<AppointmentEntity>(id, rowkey);
+            //Execute the operation
+            TableResult retrievedResult = await table.ExecuteAsync(retrieveOperation);
+
+            // Assign the result to a Item object.
+            AppointmentEntity updateEntity = (AppointmentEntity)retrievedResult.Result;
+
+            if (updateEntity != null)
+            {
+                var userId = userManager.GetUserId(HttpContext.User);
+                ViewBag.userId = userId;
+                var user = userManager.GetUserAsync(User);
+                ViewBag.phoneNumber = user.Result.PhoneNumber;
+                //Change the description
+                updateEntity.PatientName = user.Result.Name;
+                updateEntity.PatientID = userId;
+                updateEntity.PatientNumber = user.Result.PhoneNumber;
+
+                // Create the InsertOrReplace TableOperation
+                TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);
+
+                // Execute the operation.
+                await table.ExecuteAsync(insertOrReplaceOperation);
+            }
+            Console.WriteLine("Appointment is booked");
+            return RedirectToAction("ViewAppointment", "Home");
+        }
+
+
+
+
         
        /* public ActionResult CreateTableProcess(string myDoctorID, string myDoctorName, string myUserName, string myUserID,string myPhoneNumber, DateTime myDate, DateTime myTime)
         {

@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewData["Title"] = "PublishingAppointment";
+}
+
+<center>
+    <h1>Publish Appointment</h1>
+
+    <form method="post" action="PublishingAppointment">
+        <p>Doctor Name : @ViewBag.userName</p>
+        <p>Doctor Number : @ViewBag.phoneNumber</p>
+        <input type="hidden" value="@ViewBag.userName" name="myUserName" />
+        <input type="hidden" value="@ViewBag.phoneNumber" name="myPhoneNumber" />
+        <input type="hidden" value="@ViewBag.userId" name="myUserID" />
+        <p>Enter Date : <input type="date" value="" name="myDate" required></p>
+        <p>Enter Time : <input type="time" value="" name="myTime" required></p>
+
+        <p><input type="submit" value="Post" name="submit"></p>
+    </form>
+
+
+</center>
+
+
