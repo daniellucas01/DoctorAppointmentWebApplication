@@ -199,7 +199,7 @@ namespace DoctorAppointmentWebApplication.Controllers
                 rowkey = HttpContext.Request.Query["rowkey"];
             }
             Trace.WriteLine(userid + " " + rowkey);
-            CloudTable appointmentTable = gettableinformation();
+            CloudTable appointmentTable = GetTableInformation();
             TableOperation deleteAction = TableOperation.Delete(new AppointmentEntity(userid, rowkey) {ETag = "*"});
             TableResult deleteResult = appointmentTable.ExecuteAsync(deleteAction).Result;
             var msg = "";
