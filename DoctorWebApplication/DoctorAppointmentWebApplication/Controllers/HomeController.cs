@@ -230,6 +230,40 @@ namespace DoctorAppointmentWebApplication.Controllers
             return View(); // comes out with the interface
         }
 
+        public async Task<ActionResult> EditAppointmentAsync(string id) // id = PartitionKey
+        {
+            string rowkey = "";
+            if (!String.IsNullOrEmpty(HttpContext.Request.Query["rowkey"]))
+            {
+                rowkey = HttpContext.Request.Query["rowkey"];
+            }
+
+            CloudTable table = GetTableInformation();
+
+            // Create a retrieve operation that takes a item entity
+            TableOperation retrieveOperation = TableOperation.Retrieve<AppointmentEntity>(id, rowkey);
+            //Execute the operation
+            TableResult retrievedResult = await table.ExecuteAsync(retrieveOperation);
+
+            // Assign the result to a Item object.
+            AppointmentEntity updateEntity = (AppointmentEntity)retrievedResult.Result;
+
+            /*if (updateEntity != null)
+            {
+                //Change the description
+                updateEntity.Description = "in nos";
+
+                // Create the InsertOrReplace TableOperation
+                TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);
+
+                // Execute the operation.
+                table.Execute(insertOrReplaceOperation);
+                Console.WriteLine("Entity was updated.");
+            }*/
+
+
+            return View(updateEntity);
+        }
         
        /* public ActionResult CreateTableProcess(string myDoctorID, string myDoctorName, string myUserName, string myUserID,string myPhoneNumber, DateTime myDate, DateTime myTime)
         {

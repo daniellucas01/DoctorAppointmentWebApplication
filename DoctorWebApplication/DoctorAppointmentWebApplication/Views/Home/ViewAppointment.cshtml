@@ -17,7 +17,7 @@
                 <h7 class="card-title">@patient.AppointmentDate</h7>
             </div>
             <div class="card-footer">
-                <button type="button" class="btn btn-success">Edit</button>
+                <a type="button" asp-action="EditAppointment" asp-route-id="@patient.PartitionKey" asp-route-rowkey="@patient.RowKey" class="btn btn-success">Edit</a>
                 <!-- Trigger the modal with a button -->
                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete</button>
                 <!-- Modal -->
