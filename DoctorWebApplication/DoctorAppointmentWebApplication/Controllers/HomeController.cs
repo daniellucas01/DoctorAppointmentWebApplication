@@ -93,15 +93,13 @@ namespace DoctorAppointmentWebApplication.Controllers
             }
 
             return View();
-
-
-            //container
+            // Container
         }
 
         [HttpPost]
         public IActionResult BookAppointment(string myDoctorName, string myUserName, string myUserID, string myPhoneNumber, DateTime myDate, DateTime myTime)
         {
-            CloudTable table = gettableinformation();
+            CloudTable table = GetTableInformation();
 
             string uniqueRowKey = Guid.NewGuid().ToString("N");
             AppointmentEntity patient = new AppointmentEntity(myUserID, uniqueRowKey);
@@ -136,7 +134,7 @@ namespace DoctorAppointmentWebApplication.Controllers
 
         //-------------- Storage account set up ---------------------
 
-        private CloudTable gettableinformation()
+        private CloudTable GetTableInformation()
         {
 
             //link the appsettings.json to get the access key
@@ -161,7 +159,7 @@ namespace DoctorAppointmentWebApplication.Controllers
 
         public ActionResult ViewAppointment()
         {
-            CloudTable appointmentTable = gettableinformation();
+            CloudTable appointmentTable = GetTableInformation();
             List<AppointmentEntity> patients = new List<AppointmentEntity>();
             var userId = userManager.GetUserId(HttpContext.User);
             var user = userManager.GetUserAsync(User);
@@ -195,7 +193,7 @@ namespace DoctorAppointmentWebApplication.Controllers
         public ActionResult CreateTable()
         {
             // link the table information
-            CloudTable table = gettableinformation();
+            CloudTable table = GetTableInformation();
             //create table with the mentioned name if not yet exist in storage
             ViewBag.success = table.CreateIfNotExistsAsync().Result; // return false and true. if false then the table denied, else its created
             //Store the table name in the ViewBag to show in the front-end
@@ -206,8 +204,7 @@ namespace DoctorAppointmentWebApplication.Controllers
         //inputting dynamically
         public ActionResult CreateTableProcess(string myDoctorID, string myDoctorName, string myUserName, string myUserID,string myPhoneNumber, DateTime myDate, DateTime myTime)
         {
-            CloudTable table = gettableinformation();
-
+            CloudTable table = GetTableInformation();
 
             AppointmentEntity patient = new AppointmentEntity(myUserID, myDoctorID);
             patient.CustomerName = myUserName;

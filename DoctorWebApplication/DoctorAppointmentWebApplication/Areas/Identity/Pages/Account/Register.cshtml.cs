@@ -15,6 +15,12 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.Extensions.Configuration;
+using System.IO;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.AspNetCore.Http;
+using DoctorAppointmentWebApplication.Controllers;
 
 namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account
 {
@@ -52,7 +58,7 @@ namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account
 
         public string ReturnUrl { get; set; }
 
-        public IList<AuthenticationScheme> ExternalLogins { get; set; }
+        public IList<Microsoft.AspNetCore.Authentication.AuthenticationScheme> ExternalLogins { get; set; }
 
         public class InputModel
         {
@@ -99,8 +105,46 @@ namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        private CloudBlobContainer GetBlobStorageInformation()
         {
+            //read json
+            var builder = new ConfigurationBuilder()
+                            .SetBasePath(Directory.GetCurrentDirectory())
+                            .AddJsonFile("appsettings.json");
+            IConfigurationRoot configure = builder.Build();
+
+            //to get key access
+            //once link, time to read the content to get the connectiontring
+            CloudStorageAccount objectaccount =
+                CloudStorageAccount.Parse(configure["Connectionstrings:BlobStorageConnectionString"]);
+
+            CloudBlobClient blobclientagent = objectaccount.CreateCloudBlobClient();
+
+            //step 2 : how to create a new container in the blob storage account
+            CloudBlobContainer container = blobclientagent.GetContainerReference("user-profile-picture");
+
+            return container;
+        }
+        private void UploadBlob(IFormFile files, string fileName)
+        {
+            //step 1: grab the storage account and container information
+            CloudBlobContainer container = GetBlobStorageInformation();
+
+            //step 2: give a name for the blob
+            CloudBlockBlob blob = container.GetBlockBlobReference(fileName + ".jpg");
+
+            //step 3: start to upload a static picture from pc to storage
+            using (var fileStream = files.OpenReadStream())
+            {
+                blob.UploadFromStreamAsync(fileStream).Wait();
+            }
+        }
+
+        public async Task<IActionResult> OnPostAsync(IFormFile files, string returnUrl = null)
+        {
+            string photoId = Guid.NewGuid().ToString("N");
+            UploadBlob(files, photoId);
+            string imageURLFromBlob = String.Concat("https://blobstoragetp047067stora.blob.core.windows.net/user-profile-picture/", photoId, ".jpg");
             returnUrl = returnUrl ?? Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
@@ -111,10 +155,11 @@ namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account
                     PhoneNumber = Input.PhoneNumber,
                     UserName = Input.Email,
                     Email = Input.Email,
-                    Role = Input.Role
+                    Role = Input.Role,
+                    ImageURL = imageURLFromBlob
                 };
                 var result = await _userManager.CreateAsync(user, Input.Password);
-                if (result.Succeeded) //here
+                if (result.Succeeded)
                 {
                     if (Input.Role.Equals("Patient", StringComparison.InvariantCultureIgnoreCase))
                     {
