@@ -24,9 +24,9 @@
             <div class="card-footer">
                 <a type="button" asp-action="EditAppointment" asp-route-id="@patient.PartitionKey" asp-route-rowkey="@patient.RowKey" class="btn btn-success">Reschedule Appointment</a>
                 <!-- Trigger the modal with a button -->
-                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#@patient.RowKey">Delete</button>
                 <!-- Modal -->
-                <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+                <div class="modal fade" id="@patient.RowKey" tabindex="-1" role="dialog">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -46,27 +46,27 @@
                     </div>
                 </div>
                 @*@if (ViewBag.msg != null) {
-                   <div class="modal fade" id="deleteStatusModal" tabindex="-1" role="dialog">
-                       <div class="modal-dialog" role="document">
-                           <div class="modal-content">
-                               <div class="modal-header">
-                                   <h5 class="modal-title" id="deleteStatusModalLabel">@ViewBag.msg</h5>
-                                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                       <span aria-hidden="true">&times;</span>
-                                   </button>
-                               </div>
-                               <div class="modal-footer">
-                                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
-                               </div>
-                           </div>
+           <div class="modal fade" id="deleteStatusModal" tabindex="-1" role="dialog">
+               <div class="modal-dialog" role="document">
+                   <div class="modal-content">
+                       <div class="modal-header">
+                           <h5 class="modal-title" id="deleteStatusModalLabel">@ViewBag.msg</h5>
+                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                               <span aria-hidden="true">&times;</span>
+                           </button>
+                       </div>
+                       <div class="modal-footer">
+                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
                        </div>
                    </div>
-                   <script>
-                       $(function() {
-                       $("#deleteStatusModal ").dialog();
-                       });
-                   </script>
-                }*@
+               </div>
+           </div>
+           <script>
+               $(function() {
+               $("#deleteStatusModal ").dialog();
+               });
+           </script>
+        }*@
             </div>
         </div>
     }
