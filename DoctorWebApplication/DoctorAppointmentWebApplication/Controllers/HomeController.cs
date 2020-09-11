@@ -261,28 +261,18 @@ namespace DoctorAppointmentWebApplication.Controllers
                 ViewBag.msg = "Error: " + e.ToString();
             }
             return View(appointments);
-
-
-
-
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdatePublishedAsync(string id)
-=======
-        public async Task<ActionResult> EditAppointmentAsync(string id) // id = PartitionKey
->>>>>>> 40d2d6b5ab99b12c6da4fe8f57a11e941628e02c
         {
             string rowkey = "";
             if (!String.IsNullOrEmpty(HttpContext.Request.Query["rowkey"]))
             {
                 rowkey = HttpContext.Request.Query["rowkey"];
             }
-<<<<<<< HEAD
             Trace.WriteLine("PartitionKey" + id);
             Trace.WriteLine("Rowkey" + rowkey);
-=======
->>>>>>> 40d2d6b5ab99b12c6da4fe8f57a11e941628e02c
 
             CloudTable table = GetTableInformation();
 
@@ -294,7 +284,6 @@ namespace DoctorAppointmentWebApplication.Controllers
             // Assign the result to a Item object.
             AppointmentEntity updateEntity = (AppointmentEntity)retrievedResult.Result;
 
-<<<<<<< HEAD
             if (updateEntity != null)
             {
                 var userId = userManager.GetUserId(HttpContext.User);
@@ -305,28 +294,44 @@ namespace DoctorAppointmentWebApplication.Controllers
                 updateEntity.PatientName = user.Result.Name;
                 updateEntity.PatientID = userId;
                 updateEntity.PatientNumber = user.Result.PhoneNumber;
-=======
-            /*if (updateEntity != null)
-            {
-                //Change the description
-                updateEntity.Description = "in nos";
->>>>>>> 40d2d6b5ab99b12c6da4fe8f57a11e941628e02c
 
                 // Create the InsertOrReplace TableOperation
                 TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);
 
                 // Execute the operation.
-<<<<<<< HEAD
                 await table.ExecuteAsync(insertOrReplaceOperation);
             }
             Console.WriteLine("Appointment is booked");
             return RedirectToAction("ViewAppointment", "Home");
         }
 
+        public async Task<ActionResult> EditAppointmentAsync(string id) // id = PartitionKey
+        {
+            string rowkey = "";
+            if (!String.IsNullOrEmpty(HttpContext.Request.Query["rowkey"]))
+            {
+                rowkey = HttpContext.Request.Query["rowkey"];
+            }
 
+            CloudTable table = GetTableInformation();
 
+            // Create a retrieve operation that takes a item entity
+            TableOperation retrieveOperation = TableOperation.Retrieve<AppointmentEntity>(id, rowkey);
+            //Execute the operation
+            TableResult retrievedResult = await table.ExecuteAsync(retrieveOperation);
 
-=======
+            // Assign the result to a Item object.
+            AppointmentEntity updateEntity = (AppointmentEntity)retrievedResult.Result;
+
+            /*if (updateEntity != null)
+            {
+                //Change the description
+                updateEntity.Description = "in nos";
+
+                // Create the InsertOrReplace TableOperation
+                TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);
+
+                // Execute the operation.
                 table.Execute(insertOrReplaceOperation);
                 Console.WriteLine("Entity was updated.");
             }*/
@@ -352,14 +357,16 @@ namespace DoctorAppointmentWebApplication.Controllers
             if (updateEntity != null)
             {
                 //Change the description
-                if (updateEntity.AppointmentDate != AppointmentDate && updateEntity.AppointmentTime != AppointmentTime)
+                if (updateEntity.AppointmentDate != AppointmentDate || updateEntity.AppointmentTime != AppointmentTime)
                 {
                     hasChanged = true;
                 }
                 if (hasChanged)
                 {
-                    updateEntity.AppointmentDate = AppointmentDate;
-                    updateEntity.AppointmentTime = AppointmentTime;
+                    var appointmentDate = DateTime.SpecifyKind(AppointmentDate, DateTimeKind.Utc);
+                    updateEntity.AppointmentDate = appointmentDate;
+                    var appointmentTime = DateTime.SpecifyKind(AppointmentTime, DateTimeKind.Utc);
+                    updateEntity.AppointmentTime = appointmentTime;
                     // Create the InsertOrReplace TableOperation
                     TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);
 
@@ -374,7 +381,6 @@ namespace DoctorAppointmentWebApplication.Controllers
             }
             return View();
         }
->>>>>>> 40d2d6b5ab99b12c6da4fe8f57a11e941628e02c
         
        /* public ActionResult CreateTableProcess(string myDoctorID, string myDoctorName, string myUserName, string myUserID,string myPhoneNumber, DateTime myDate, DateTime myTime)
         {
@@ -405,12 +411,5 @@ namespace DoctorAppointmentWebApplication.Controllers
             return View();
         }
         */
-
-
-
-
-
-
-
     }
 }
