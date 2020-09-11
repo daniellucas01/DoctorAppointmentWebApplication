@@ -14,16 +14,14 @@
         <div class="card mb-3">
             <div class="card-body">
                 <h4 class="card-title">@patient.DoctorName</h4>
-                <h7 class="card-title">@patient.AppointmentDate</h7>
+                <h5>@patient.DoctorNumber</h5>
+                @{
+                    var date = patient.AppointmentDate.ToString("dd/MM/yyyy");
+                    var time = patient.AppointmentTime.ToShortTimeString();
+                }
+                <p><small>@date    @time</small></p>
             </div>
             <div class="card-footer">
-                @*<form asp-action="EditAppointment" method="get">
-                    <input type="hidden" name="partitionkey" value="@patient.PartitionKey" />
-                    <input type="hidden" name="rowkey" value="@patient.RowKey" />
-                    <input type="hidden" name="date" value="@patient.AppointmentDate" />
-                    <input type="hidden" name="time" value="@patient.AppointmentTime" />
-                    <input type="submit" value="Submit" class="btn btn-success">
-                </form>*@
                 <a type="button" asp-action="EditAppointment" asp-route-id="@patient.PartitionKey" asp-route-rowkey="@patient.RowKey" class="btn btn-success">Reschedule Appointment</a>
                 <!-- Trigger the modal with a button -->
                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete</button>
@@ -48,27 +46,27 @@
                     </div>
                 </div>
                 @*@if (ViewBag.msg != null) {
-           <div class="modal fade" id="deleteStatusModal" tabindex="-1" role="dialog">
-               <div class="modal-dialog" role="document">
-                   <div class="modal-content">
-                       <div class="modal-header">
-                           <h5 class="modal-title" id="deleteStatusModalLabel">@ViewBag.msg</h5>
-                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                               <span aria-hidden="true">&times;</span>
-                           </button>
-                       </div>
-                       <div class="modal-footer">
-                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+                   <div class="modal fade" id="deleteStatusModal" tabindex="-1" role="dialog">
+                       <div class="modal-dialog" role="document">
+                           <div class="modal-content">
+                               <div class="modal-header">
+                                   <h5 class="modal-title" id="deleteStatusModalLabel">@ViewBag.msg</h5>
+                                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                       <span aria-hidden="true">&times;</span>
+                                   </button>
+                               </div>
+                               <div class="modal-footer">
+                                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+                               </div>
+                           </div>
                        </div>
                    </div>
-               </div>
-           </div>
-           <script>
-               $(function() {
-               $("#deleteStatusModal ").dialog();
-               });
-           </script>
-        }*@
+                   <script>
+                       $(function() {
+                       $("#deleteStatusModal ").dialog();
+                       });
+                   </script>
+                }*@
             </div>
         </div>
     }

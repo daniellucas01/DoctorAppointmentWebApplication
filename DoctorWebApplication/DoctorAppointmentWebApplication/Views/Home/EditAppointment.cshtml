@@ -15,26 +15,16 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="AppointmentDate" class="control-label"></label>
-                <input asp-for="AppointmentDate" class="form-control" value="@ViewBag.date"/>
+                <input type="date" asp-for="AppointmentDate" class="form-control"/>
                 <span asp-validation-for="AppointmentDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="AppointmentTime" class="control-label"></label>
-                <input asp-for="AppointmentTime" class="form-control" value="@ViewBag.time"/>
+                <input type="time" asp-for="AppointmentTime" class="form-control"/>
                 <span asp-validation-for="AppointmentTime" class="text-danger"></span>
             </div>
-   
-            <div class="form-group">
-                <label asp-for="PartitionKey" class="control-label"></label>
-                <input asp-for="PartitionKey" class="form-control" />
-                <span asp-validation-for="PartitionKey" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RowKey" class="control-label"></label>
-                <input asp-for="RowKey" class="form-control" />
-                <span asp-validation-for="RowKey" class="text-danger"></span>
-            </div>
-           
+            <input type="hidden" asp-for="PartitionKey" class="form-control" />
+            <input type="hidden" asp-for="RowKey" class="form-control" />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
