@@ -15,7 +15,7 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using System.IO;
 using DoctorAppointmentWebApplication.Models;
-
+using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 
 namespace DoctorAppointmentWebApplication.Controllers
 {
@@ -116,7 +116,7 @@ namespace DoctorAppointmentWebApplication.Controllers
                 table.ExecuteAsync(tableOperation);
                 ViewBag.TableName = table.Name;
                 ViewBag.msg = "Insert Success!";
-                return RedirectToAction("ListUsers","Home");
+                return RedirectToAction("ListUsers", "Home");
                 /*RedirectToAction("Home", "Index");*/ //Problem. Redirect to Home.
             }
             catch (Exception ex)
@@ -183,12 +183,39 @@ namespace DoctorAppointmentWebApplication.Controllers
                 }
                 while (token != null);
             }
-            catch (Exception e)  
+            catch (Exception e)
             {
                 ViewBag.msg = "Error: " + e.ToString();
             }
             return View(patients);
         }
+
+        
+        public ActionResult DeleteAppointment(string userid, string rowkey) 
+        {
+            Trace.WriteLine("Delete is clicked");
+            if (!String.IsNullOrEmpty(HttpContext.Request.Query["rowkey"]))
+            {
+                rowkey = HttpContext.Request.Query["rowkey"];
+            }
+            Trace.WriteLine(userid + " " + rowkey);
+            CloudTable appointmentTable = gettableinformation();
+            TableOperation deleteAction = TableOperation.Delete(new AppointmentEntity(userid, rowkey) {ETag = "*"});
+            TableResult deleteResult = appointmentTable.ExecuteAsync(deleteAction).Result;
+            var msg = "";
+
+            if (deleteResult.HttpStatusCode == 204)
+            {
+                msg = "Delete Succesfully";
+            }
+            else 
+            {
+                msg = "Delete Failed";
+            }
+            return RedirectToAction("ViewAppointment", "Home", new {msg});
+        }
+
+
 
         public ActionResult CreateTable()
         {

@@ -17,8 +17,60 @@
                 <h7 class="card-title">@patient.AppointmentDate</h7>
             </div>
             <div class="card-footer">
-                <a href="#" class="btn btn-danger">Edit</a>
-                <a href="#" class="btn btn-danger">Delete</a>
+                <button type="button" class="btn btn-success">Edit</button>
+                <!-- Trigger the modal with a button -->
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                <!-- Modal -->
+                <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel">Are you sure?</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Deleting the appointment will delete the appointment session made previously by you as a user.
+                            </div>
+                            <div class="modal-footer">
+                                @{
+                                    var parititonKey = patient.PartitionKey;
+                                    var rowKey = patient.RowKey;
+                                    var deleteParam = new Dictionary<string, string>
+                                    {
+                                        {"UserId", parititonKey},
+                                        {"RowKey", rowKey}
+                                    };
+                                }
+                                <form asp-action="DeleteAppointment" asp-route-userid="@patient.PartitionKey" asp-route-rowkey="@patient.RowKey" ><button class="btn btn-danger" type="submit">Delete Appointment</button></form>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*@if (ViewBag.msg != null) { 
+                    <div class="modal fade" id="deleteStatusModal" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteStatusModalLabel">@ViewBag.msg</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        $(function() {
+                        $("#deleteStatusModal ").dialog();
+                        });
+                    </script>
+                 }*@
             </div>
         </div>
     }
