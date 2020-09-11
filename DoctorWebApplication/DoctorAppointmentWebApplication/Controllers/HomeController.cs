@@ -107,8 +107,10 @@ namespace DoctorAppointmentWebApplication.Controllers
             patient.DoctorID = myDoctorID;
             patient.PatientName = myUserName;
             patient.DoctorName = myDoctorName;
-            patient.AppointmentDate = myDate;
-            patient.AppointmentTime = myTime;
+            var utcDate = DateTime.SpecifyKind(myDate, DateTimeKind.Utc); 
+            var utcTime = DateTime.SpecifyKind(myTime, DateTimeKind.Utc);
+            patient.AppointmentDate = utcDate;
+            patient.AppointmentTime = utcTime;
             patient.PatientNumber = myPhoneNumber;
             patient.DoctorNumber = "123456"; //Hard Code number (needs to change) -> algo part
             try
