@@ -4,25 +4,32 @@
     ViewBag.Title = "All Users";
 }
 
+<h1 class="ml-4">Choose a doctor</h1>
+<br />
+
 @if (Model.Any())
 {
-    foreach (var user in Model)
-    {
-        @if (user.Role.Equals("Doctor", StringComparison.InvariantCultureIgnoreCase))
-        {
-            <div class="card mb-3">
-                <div class="card-header">
-                    User Id : @user.Id
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">@user.UserName</h5>
-                </div>
-                <div class="card-footer">
-                    <a class = "btn btn-primary" asp-action="BookAppointment" asp-route-id="@user.Id" asp-route-name="@user.Name" >Book Appointment</a>
-                </div>
-            </div>
-        }
-    }
+    <div class="container">
+        <div class="row">
+            @foreach (var user in Model)
+            {
+                @if (user.Role.Equals("Doctor", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    <div class="col-sm-6 mt-2 mb-2">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">@user.Name</h5>
+                                <p class="card-text">Doctor at Intelligent Hospital</p>
+                                <p class="card-text">@user.PhoneNumber</p>
+                                <a class="btn btn-primary" asp-action="BookAppointment" asp-route-id="@user.Id" asp-route-name="@user.Name">Book Appointment</a>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                }
+            }
+        </div>
+    </div>
 }
 
 else
