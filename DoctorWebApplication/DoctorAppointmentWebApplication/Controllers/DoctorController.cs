@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using DoctorAppointmentWebApplication.Models;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System.Diagnostics;
 
 namespace DoctorAppointmentWebApplication.Controllers
 {
@@ -106,18 +108,16 @@ namespace DoctorAppointmentWebApplication.Controllers
 
         public ActionResult ManageTimeSlots()
         {
-            CloudTable table = GetTableInformation();
-
             CloudTable appointmentTable = GetTableInformation();
             List<AppointmentEntity> appointment = new List<AppointmentEntity>();
             var userId = userManager.GetUserId(HttpContext.User);
+            System.Diagnostics.Trace.WriteLine(userId.ToString());
             var user = userManager.GetUserAsync(User);
-            var userName = user.Result.Name;
             try
             {
                 TableQuery<AppointmentEntity> query =
                     new TableQuery<AppointmentEntity>()
-                    .Where(TableQuery.CombineFilters(TableQuery.GenerateFilterCondition("DcotorID", QueryComparisons.Equal, userId),
+                    .Where(TableQuery.CombineFilters(TableQuery.GenerateFilterCondition("DoctorID", QueryComparisons.Equal, userId),
                            TableOperators.And,
                            TableQuery.GenerateFilterCondition("CreatedBy", QueryComparisons.Equal, "Doctor")));
 
@@ -142,6 +142,74 @@ namespace DoctorAppointmentWebApplication.Controllers
             }
             System.Diagnostics.Trace.WriteLine(appointment.ToString());
             return View(appointment);
+        }
+
+        public IActionResult DeleteTimeSlots(string rowkey)
+        {
+            CloudTable appointmentTable = GetTableInformation();
+            if (!String.IsNullOrEmpty(HttpContext.Request.Query["rowkey"]))
+            {
+                rowkey = HttpContext.Request.Query["rowkey"];
+            }
+            TableOperation deleteAction = TableOperation.Delete(new AppointmentEntity("Appointment", rowkey) { ETag = "*" });
+            TableResult deleteResult = appointmentTable.ExecuteAsync(deleteAction).Result;
+            return RedirectToAction("ManageTimeSlots", "Doctor");
+        }
+
+        public async Task<ActionResult> EditTimeSlotsAsync(string id)
+        {
+            string rowkey = "";
+            if (!String.IsNullOrEmpty(HttpContext.Request.Query["rowkey"]))
+            {
+                rowkey = HttpContext.Request.Query["rowkey"];
+            }
+
+            CloudTable table = GetTableInformation();
+
+            TableOperation retrieveTimeSlotDetails = TableOperation.Retrieve<AppointmentEntity>(id, rowkey);
+            
+            TableResult retrievedResult = await table.ExecuteAsync(retrieveTimeSlotDetails);
+
+            AppointmentEntity updateEntity = (AppointmentEntity)retrievedResult.Result;
+
+            return View(updateEntity);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveTimeSlotAsync(string PartitionKey, string RowKey, DateTime AppointmentDate, DateTime AppointmentTime)
+        {
+            bool hasChanged = false;
+            CloudTable table = GetTableInformation();
+
+            TableOperation retrieveOperation = TableOperation.Retrieve<AppointmentEntity>(PartitionKey, RowKey);
+            TableResult retrievedResult = await table.ExecuteAsync(retrieveOperation);
+
+            AppointmentEntity updateEntity = (AppointmentEntity)retrievedResult.Result;
+
+            if (updateEntity != null)
+            {
+                if (updateEntity.AppointmentDate != AppointmentDate || updateEntity.AppointmentTime != AppointmentTime)
+                {
+                    hasChanged = true;
+                }
+                if (hasChanged)
+                {
+                    var appointmentDate = DateTime.SpecifyKind(AppointmentDate, DateTimeKind.Utc);
+                    updateEntity.AppointmentDate = appointmentDate;
+                    var appointmentTime = DateTime.SpecifyKind(AppointmentTime, DateTimeKind.Utc);
+                    updateEntity.AppointmentTime = appointmentTime;
+                    // Create the InsertOrReplace TableOperation
+                    TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);
+
+                    // Execute the operation.
+                    await table.ExecuteAsync(insertOrReplaceOperation);
+                }
+                else
+                {
+                    Trace.WriteLine("No Changes");
+                }
+            }
+            return RedirectToAction("ManageTimeSlots", "Doctor");
         }
     }
 }

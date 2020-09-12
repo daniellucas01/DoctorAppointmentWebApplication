@@ -215,7 +215,6 @@ namespace DoctorAppointmentWebApplication.Controllers
         {
             string rowkey = "";
             string createdBy = "";
-            Trace.WriteLine("Delete is clicked");
             if (!String.IsNullOrEmpty(HttpContext.Request.Query["rowkey"]))
             {
                 rowkey = HttpContext.Request.Query["rowkey"];
@@ -242,6 +241,7 @@ namespace DoctorAppointmentWebApplication.Controllers
                     msg = "Delete Failed Created By Patient";
                 }
             }
+
             else
             {
                 // Create a retrieve operation that takes a item entity

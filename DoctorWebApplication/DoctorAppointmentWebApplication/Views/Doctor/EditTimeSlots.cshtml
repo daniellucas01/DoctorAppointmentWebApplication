@@ -1,0 +1,36 @@
+﻿@model DoctorAppointmentWebApplication.Models.AppointmentEntity
+
+@{
+    ViewData["Title"] = "EditTimeSlots";
+}
+
+<h1>Time Slot Details</h1>
+
+@ViewBag.partitionkey
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="SaveTimeSlot" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="AppointmentDate" class="control-label"></label>
+                <input type="date" asp-for="AppointmentDate" class="form-control" />
+                <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AppointmentTime" class="control-label"></label>
+                <input type="time" asp-for="AppointmentTime" class="form-control" />
+                <span asp-validation-for="AppointmentTime" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="PartitionKey" class="form-control" />
+            <input type="hidden" asp-for="RowKey" class="form-control" />
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a class="btn btn-primary" asp-action="ManageTimeSlots">Return to List</a>
+</div>
