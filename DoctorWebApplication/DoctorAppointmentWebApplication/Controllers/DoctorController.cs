@@ -11,10 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using DoctorAppointmentWebApplication.Models;
-<<<<<<< HEAD
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-=======
->>>>>>> 5ed5764e28ea372e32ca9d54f787495031bfdb16
 using System.Diagnostics;
 
 namespace DoctorAppointmentWebApplication.Controllers
@@ -147,7 +144,6 @@ namespace DoctorAppointmentWebApplication.Controllers
             return View(appointment);
         }
 
-<<<<<<< HEAD
         public IActionResult DeleteTimeSlots(string rowkey)
         {
             CloudTable appointmentTable = GetTableInformation();
@@ -176,7 +172,49 @@ namespace DoctorAppointmentWebApplication.Controllers
 
             AppointmentEntity updateEntity = (AppointmentEntity)retrievedResult.Result;
 
-=======
+            return View(updateEntity);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveTimeSlotAsync(string PartitionKey, string RowKey, DateTime AppointmentDate, DateTime AppointmentTime)
+        {
+            bool hasChanged = false;
+            CloudTable table = GetTableInformation();
+
+            TableOperation retrieveOperation = TableOperation.Retrieve<AppointmentEntity>(PartitionKey, RowKey);
+            TableResult retrievedResult = await table.ExecuteAsync(retrieveOperation);
+
+            AppointmentEntity updateEntity = (AppointmentEntity)retrievedResult.Result;
+
+            if (updateEntity != null)
+            {
+                if (updateEntity.AppointmentDate != AppointmentDate || updateEntity.AppointmentTime != AppointmentTime)
+                {
+                    hasChanged = true;
+                }
+                if (hasChanged)
+                {
+                    var appointmentDate = DateTime.SpecifyKind(AppointmentDate, DateTimeKind.Utc);
+                    updateEntity.AppointmentDate = appointmentDate;
+                    var appointmentTime = DateTime.SpecifyKind(AppointmentTime, DateTimeKind.Utc);
+                    updateEntity.AppointmentTime = appointmentTime;
+                    // Create the InsertOrReplace TableOperation
+                    TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);
+
+                    // Execute the operation.
+                    await table.ExecuteAsync(insertOrReplaceOperation);
+                }
+                else
+                {
+                    Trace.WriteLine("No Changes");
+                }
+            }
+            return RedirectToAction("ManageTimeSlots", "Doctor");
+        }
+
+
+        //============================================
+
         // View Appointment of the Booked
         public ActionResult ViewBookedAppointment()
         {
@@ -264,40 +302,26 @@ namespace DoctorAppointmentWebApplication.Controllers
             }*/
 
 
->>>>>>> 5ed5764e28ea372e32ca9d54f787495031bfdb16
             return View(updateEntity);
         }
 
         [HttpPost]
-<<<<<<< HEAD
-        public async Task<IActionResult> SaveTimeSlotAsync(string PartitionKey, string RowKey, DateTime AppointmentDate, DateTime AppointmentTime)
-=======
         public async Task<IActionResult> EditAppointment(string PartitionKey, string RowKey, DateTime AppointmentDate, DateTime AppointmentTime)
->>>>>>> 5ed5764e28ea372e32ca9d54f787495031bfdb16
         {
             bool hasChanged = false;
             CloudTable table = GetTableInformation();
 
-<<<<<<< HEAD
-            TableOperation retrieveOperation = TableOperation.Retrieve<AppointmentEntity>(PartitionKey, RowKey);
-            TableResult retrievedResult = await table.ExecuteAsync(retrieveOperation);
-
-=======
             // Create a retrieve operation that takes a item entity
             TableOperation retrieveOperation = TableOperation.Retrieve<AppointmentEntity>(PartitionKey, RowKey);
             //Execute the operation
             TableResult retrievedResult = await table.ExecuteAsync(retrieveOperation);
 
             // Assign the result to a Item object.
->>>>>>> 5ed5764e28ea372e32ca9d54f787495031bfdb16
             AppointmentEntity updateEntity = (AppointmentEntity)retrievedResult.Result;
 
             if (updateEntity != null)
             {
-<<<<<<< HEAD
-=======
                 //Change the description
->>>>>>> 5ed5764e28ea372e32ca9d54f787495031bfdb16
                 if (updateEntity.AppointmentDate != AppointmentDate || updateEntity.AppointmentTime != AppointmentTime)
                 {
                     hasChanged = true;
@@ -313,21 +337,14 @@ namespace DoctorAppointmentWebApplication.Controllers
 
                     // Execute the operation.
                     await table.ExecuteAsync(insertOrReplaceOperation);
-<<<<<<< HEAD
-=======
                     Trace.WriteLine("Entity was updated.");
->>>>>>> 5ed5764e28ea372e32ca9d54f787495031bfdb16
                 }
                 else
                 {
                     Trace.WriteLine("No Changes");
                 }
             }
-<<<<<<< HEAD
-            return RedirectToAction("ManageTimeSlots", "Doctor");
-=======
             return RedirectToAction("ViewBookedAppointment", "Doctor");
->>>>>>> 5ed5764e28ea372e32ca9d54f787495031bfdb16
         }
     }
 }
