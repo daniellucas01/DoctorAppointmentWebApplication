@@ -5,6 +5,16 @@
 }
 
 <h1 class="ml-4">Choose a doctor</h1>
+
+<center>
+    <form method="get" action="ListUsers">
+        <p>Search by Doctor Name :<input type="text" value="" name="DoctorName"></p>
+        <p><input type="submit" value="search" name="submit"></p>
+
+    </form>
+
+</center>
+
 <br />
 
 @if (Model.Any())
