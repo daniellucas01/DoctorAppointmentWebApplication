@@ -28,6 +28,7 @@ namespace DoctorAppointmentWebApplication.Models
         public string PatientNumber { get; set; }
         public string DoctorNumber { get; set; }
         public string CreatedBy { get; set; }
+        public string CoronaRisk { get; set; }
 
     }
 }

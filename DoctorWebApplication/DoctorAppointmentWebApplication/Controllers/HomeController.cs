@@ -111,7 +111,7 @@ namespace DoctorAppointmentWebApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult BookAppointment(string myDoctorName,string myDoctorID, string myUserName, string myUserID, string myPhoneNumber, DateTime myDate, DateTime myTime, string myDoctorPhoneNumber)
+        public IActionResult BookAppointment(string myDoctorName,string myDoctorID, string myUserName, string myUserID, string myPhoneNumber, DateTime myDate, DateTime myTime, string myDoctorPhoneNumber, string coronaRisk)
         {
             CloudTable table = GetTableInformation();
 
@@ -124,6 +124,8 @@ namespace DoctorAppointmentWebApplication.Controllers
             patient.DoctorNumber = myDoctorPhoneNumber;
             patient.PatientNumber = myPhoneNumber;
             patient.CreatedBy = "Patient";
+            patient.CoronaRisk = coronaRisk;
+
 
             // Specify the Time Zone to prevent Table Storage to convert the Date Time to UTC
             var utcDate = DateTime.SpecifyKind(myDate, DateTimeKind.Utc); 
@@ -343,12 +345,19 @@ namespace DoctorAppointmentWebApplication.Controllers
         public async Task<IActionResult> UpdatePublishedAsync(string id)
         {
             string rowkey = "";
+            string coronaRisk = "";
             if (!String.IsNullOrEmpty(HttpContext.Request.Query["rowkey"]))
             {
                 rowkey = HttpContext.Request.Query["rowkey"];
             }
+            if (!String.IsNullOrEmpty(HttpContext.Request.Query["coronaRisk"]))
+            {
+                coronaRisk = HttpContext.Request.Query["coronaRisk"];
+            }
             Trace.WriteLine("PartitionKey" + id);
             Trace.WriteLine("Rowkey" + rowkey);
+            Trace.WriteLine("Risk" + coronaRisk);
+
 
             CloudTable table = GetTableInformation();
 
@@ -370,6 +379,7 @@ namespace DoctorAppointmentWebApplication.Controllers
                 updateEntity.PatientName = user.Result.Name;
                 updateEntity.PatientID = userId;
                 updateEntity.PatientNumber = user.Result.PhoneNumber;
+                updateEntity.CoronaRisk = coronaRisk;
 
                 // Create the InsertOrReplace TableOperation
                 TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);

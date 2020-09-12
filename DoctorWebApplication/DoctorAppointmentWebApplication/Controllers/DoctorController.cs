@@ -88,6 +88,7 @@ namespace DoctorAppointmentWebApplication.Controllers
             insertTable.PatientNumber = "None";
             insertTable.DoctorNumber = myPhoneNumber;
             insertTable.CreatedBy = "Doctor";
+            insertTable.CoronaRisk = "None";
             try
             {
                 TableOperation tableOperation = TableOperation.Insert(insertTable);

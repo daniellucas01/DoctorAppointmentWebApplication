@@ -9,26 +9,54 @@
     <script>alert("@ViewBag.msg");</script>
 }
 
-<center>
-    <h1>Create Appointment</h1>
+<main class="booking-form">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">Book Appointment</div>
+                    <div class="card-body">
+                        <form method="post" action="BookAppointment">
+                            <input type="hidden" value="@ViewBag.userName" name="myUserName" />
+                            <input type="hidden" value="@ViewBag.phoneNumber" name="myPhoneNumber" />
+                            <input type="hidden" value="@ViewBag.DoctorId" name="myDoctorID" />
+                            <input type="hidden" value="@ViewBag.userId" name="myUserID" />
+                            <input type="hidden" value="@ViewBag.DoctorPhoneNumber" name="myDoctorPhoneNumber" />
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label text-md-right">Doctor Name</label>
+                                <div class="col-md-6">
+                                    <input type="text" value="@ViewBag.DoctorName" name="myDoctorName" class="form-control" readonly="readonly" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label text-md-right">Date</label>
+                                <div class="col-md-6">
+                                    <input type="date" value="" name="myDate" required class="form-control">
+                                </div>
+                            </div>
 
-    <form method="post" action="BookAppointment">
-        <p>Patient Name : @ViewBag.userName</p>
-        <p>Patient Number : @ViewBag.phoneNumber</p>
-        <p>Doctor Name : @ViewBag.DoctorName</p>
-        <p>Doctor ID : @ViewBag.DoctorId</p>
-        <p>Doctor Phone Number : @ViewBag.DoctorPhoneNumber</p>
-        <input type="hidden" value="@ViewBag.userName" name="myUserName" />
-        <input type="hidden" value="@ViewBag.phoneNumber" name="myPhoneNumber" />
-        <input type="hidden" value="@ViewBag.DoctorName" name="myDoctorName" />
-        <input type="hidden" value="@ViewBag.DoctorId" name="myDoctorID" />
-        <input type="hidden" value="@ViewBag.userId" name="myUserID" />
-        <input type="hidden" value="@ViewBag.DoctorPhoneNumber" name="myDoctorPhoneNumber" />
-        <p>Enter Date : <input type="date" value="" name="myDate" required></p>
-        <p>Enter Time : <input type="time" value="" name="myTime" required></p>
-
-        <p><input type="submit" value="Submit" name="submit"></p>
-    </form>
-
-
-</center>
+                            <div class="form-group row">
+                                <label for="user_name" class="col-md-4 col-form-label text-md-right">Time</label>
+                                <div class="col-md-6">
+                                    <input type="time" value="" name="myTime" required class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="user_name" class="col-md-4 col-form-label text-md-right">Corona Screening</label>
+                                <div class="col-md-6">
+                                    <select id="coronaRisk" name="coronaRisk" class="form-control">
+                                        <option value="High">Yes</option>
+                                        <option value="Low">No</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 offset-md-4">
+                                <input type="submit" value="Submit" name="submit" class="btn btn-primary">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

@@ -35,10 +35,34 @@
                     @appointment.AppointmentTime
                 </td>
                 <td>
-                    <form asp-action="UpdatePublished" asp-route-id="@appointment.PartitionKey" asp-route-rowkey="@appointment.RowKey"><button class="btn btn-danger" type="submit">Book Appointment</button></form>
+                    @{
+                        var uniqueModalID = "a" + appointment.RowKey.ToString();
+                    }
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#@uniqueModalID">Book Appointment</button>
                 </td>
+                <!-- Modal -->
+                <div class="modal fade" id="@uniqueModalID" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel">Corona Pre-Screening</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                To the best of your knowledge have you been in close proximity to any individual who tested positive for COVID-19?
+                            </div>
+                            <div class="modal-footer">
+                                <form asp-action="UpdatePublished" asp-route-id="@appointment.PartitionKey" asp-route-rowkey="@appointment.RowKey" asp-route-coronaRisk ="High"><button class="btn btn-success" type="submit"> Yes </button></form>
+                                <form asp-action="UpdatePublished" asp-route-id="@appointment.PartitionKey" asp-route-rowkey="@appointment.RowKey" asp-route-coronaRisk ="Low"><button class="btn btn-danger" type="submit"> No </button></form>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </tr>
-        }
+         }
     </table>
 }
 else
