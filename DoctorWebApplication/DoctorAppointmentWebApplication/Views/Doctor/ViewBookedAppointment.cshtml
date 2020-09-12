@@ -1,0 +1,63 @@
+﻿@model IEnumerable<DoctorAppointmentWebApplication.Models.AppointmentEntity>
+
+@{
+    ViewData["Title"] = "ViewBookedAppointment";
+}
+
+<h1><u>Booked Appointments</u></h1>
+<br />
+<!--This View is for Published appointments, Usage : Users, Intention: to view the published appointments from doctor-->
+
+@if (Model.Any())
+{
+    @foreach (var patient in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <h4 class="card-title">@patient.PatientName</h4>
+                <h5>@patient.PatientNumber</h5>
+                @{
+                    var date = patient.AppointmentDate.ToString("dd MMM yyyy");
+                    var time = patient.AppointmentTime.ToShortTimeString();
+                }
+                <p><small>@date    @time</small></p>
+            </div>
+            <div class="card-footer">
+                @{
+                    var uniqueModalID = "a" + patient.RowKey.ToString();
+                }
+                <a type="button" asp-action="EditAppointment" asp-route-rowkey="@patient.RowKey" class="btn btn-success">Reschedule Appointment</a>
+                <!-- Trigger the modal with a button -->
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#@uniqueModalID">Delete</button>
+                <!-- Modal -->
+                <div class="modal fade" id="@uniqueModalID" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel">Are you sure?</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Deleting the appointment will delete the appointment session made previously by you as a user.
+                            </div>
+                            <div class="modal-footer">
+                                <form asp-action="DeleteAppointment" asp-route-rowkey="@patient.RowKey"><button class="btn btn-danger" type="submit">Delete Appointment</button></form>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+else
+{
+    <h5>
+        Sorry, you have no appointments made. <br />
+        Please try again once you have made an appointment
+    </h5>
+}

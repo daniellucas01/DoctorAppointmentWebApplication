@@ -36,7 +36,10 @@
                         else if (SignInManager.IsSignedIn(User) && User.IsInRole("Doctor"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Doctor" asp-action="PublishingAppointment">Doctor Publish Appointments</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Doctor" asp-action="PublishingAppointment">Publish Appointments</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Doctor" asp-action="ViewBookedAppointment">View Booked Appointment</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Doctor" asp-action="ManageTimeSlots">Manage Timeslots</a>
