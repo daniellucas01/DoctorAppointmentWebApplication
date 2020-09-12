@@ -60,9 +60,17 @@ namespace DoctorAppointmentWebApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult ListUsers()
+        public IActionResult ListUsers(string DoctorName)
         {
+
             var users = userManager.Users;
+
+            if (DoctorName != null)
+            {
+                users = userManager.Users.Where(x => x.Name.Equals(DoctorName));
+            }
+           
+           
             return View(users);
         }
 
