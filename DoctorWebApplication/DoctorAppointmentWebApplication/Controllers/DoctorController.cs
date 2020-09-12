@@ -104,7 +104,44 @@ namespace DoctorAppointmentWebApplication.Controllers
             return View();
         }
 
+        public ActionResult ManageTimeSlots()
+        {
+            CloudTable table = GetTableInformation();
+
+            CloudTable appointmentTable = GetTableInformation();
+            List<AppointmentEntity> appointment = new List<AppointmentEntity>();
+            var userId = userManager.GetUserId(HttpContext.User);
+            var user = userManager.GetUserAsync(User);
+            var userName = user.Result.Name;
+            try
+            {
+                TableQuery<AppointmentEntity> query =
+                    new TableQuery<AppointmentEntity>()
+                    .Where(TableQuery.CombineFilters(TableQuery.GenerateFilterCondition("DcotorID", QueryComparisons.Equal, userId),
+                           TableOperators.And,
+                           TableQuery.GenerateFilterCondition("CreatedBy", QueryComparisons.Equal, "Doctor")));
 
 
+                TableContinuationToken token = null;
+
+                do
+                {
+                    TableQuerySegment<AppointmentEntity> result = appointmentTable.ExecuteQuerySegmentedAsync(query, token).Result;
+                    token = result.ContinuationToken;
+
+                    foreach (AppointmentEntity timeSlots in result.Results)
+                    {
+                        appointment.Add(timeSlots);
+                    }
+                }
+                while (token != null);
+            }
+            catch (Exception e)
+            {
+                ViewBag.msg = "Error: " + e.ToString();
+            }
+            System.Diagnostics.Trace.WriteLine(appointment.ToString());
+            return View(appointment);
+        }
     }
 }

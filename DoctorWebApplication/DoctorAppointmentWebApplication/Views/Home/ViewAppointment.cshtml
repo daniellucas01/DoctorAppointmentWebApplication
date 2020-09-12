@@ -22,11 +22,14 @@
                 <p><small>@date    @time</small></p>
             </div>
             <div class="card-footer">
+                @{
+                    var uniqueModalID = "a" + patient.RowKey.ToString();
+                }
                 <a type="button" asp-action="EditAppointment" asp-route-id="@patient.PartitionKey" asp-route-rowkey="@patient.RowKey" class="btn btn-success">Reschedule Appointment</a>
                 <!-- Trigger the modal with a button -->
-                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#@patient.RowKey">Delete</button>
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#@uniqueModalID">Delete</button>
                 <!-- Modal -->
-                <div class="modal fade" id="@patient.RowKey" tabindex="-1" role="dialog">
+                <div class="modal fade" id="@uniqueModalID" tabindex="-1" role="dialog">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
