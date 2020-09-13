@@ -209,10 +209,22 @@ namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account
             return Page();
         }
 
-        const string ServiceBusConnectionString = "Endpoint=sb://azureservicebustp047067.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=27AeQCdxa6yeB3QzMTfmALnX+gdDWwvF/5sUiUdCgAs=";
+        public string RetrieveAzureServiceBusConnection()
+        {
+            //read json
+            var builder = new ConfigurationBuilder()
+                            .SetBasePath(Directory.GetCurrentDirectory())
+                            .AddJsonFile("appsettings.json");
+            IConfigurationRoot configure = builder.Build();
+
+            //to get key access
+            //once link, time to read the content to get the connectiontring
+            return configure["Connectionstrings:ServiceBusConnection"];
+        }
+
         private async Task createServiceBusQueueAsync(string queueName)
         {
-            var client = new ManagementClient(ServiceBusConnectionString);
+            var client = new ManagementClient(RetrieveAzureServiceBusConnection());
 
             if (!await client.QueueExistsAsync(queueName).ConfigureAwait(false))
             {
