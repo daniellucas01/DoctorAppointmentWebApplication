@@ -13,13 +13,22 @@ using Microsoft.WindowsAzure.Storage.Table;
 using DoctorAppointmentWebApplication.Models;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Azure.ServiceBus;
+using System.Text;
+using System.Threading;
 
 namespace DoctorAppointmentWebApplication.Controllers
 {
+    [Authorize(Roles = "Doctor")]
     public class DoctorController : Controller
-
-        //INI CONTROLLER BUAT DOKTER (PUBLISHING ) NANTI KASIH AUTHORIZATION SAMA KAYAK HOME CONTROLLER --> ALGO PART
     {
+        const string ServiceBusConnectionString = "Endpoint=sb://azureservicebustp047067.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=27AeQCdxa6yeB3QzMTfmALnX+gdDWwvF/5sUiUdCgAs=";
+        /*const string QueueName = "18e39f84-332c-4019-85ac-ecb669eeb0d7";*/
+        public const string Namespace = "azureservicebustp047067";
+
+        static IQueueClient queueClient;
+        static List<string> items;
         private readonly UserManager<DoctorAppointmentWebApplicationUser> userManager;
         private DoctorAppointmentWebApplicationContext _application;
 
@@ -69,7 +78,7 @@ namespace DoctorAppointmentWebApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult PublishingAppointment (DateTime myDate, DateTime myTime, string myUserID, string myUserName, string myPhoneNumber)
+        public IActionResult PublishingAppointment(DateTime myDate, DateTime myTime, string myUserID, string myUserName, string myPhoneNumber)
         {
             CloudTable table = GetTableInformation();
 
@@ -166,7 +175,7 @@ namespace DoctorAppointmentWebApplication.Controllers
             CloudTable table = GetTableInformation();
 
             TableOperation retrieveTimeSlotDetails = TableOperation.Retrieve<AppointmentEntity>(id, rowkey);
-            
+
             TableResult retrievedResult = await table.ExecuteAsync(retrieveTimeSlotDetails);
 
             AppointmentEntity updateEntity = (AppointmentEntity)retrievedResult.Result;
@@ -344,6 +353,54 @@ namespace DoctorAppointmentWebApplication.Controllers
                 }
             }
             return RedirectToAction("ViewBookedAppointment", "Doctor");
+        }
+
+        public async Task<IActionResult> ReceiveNotification(string QueueName)
+        {
+            QueueName = "18e39f84-332c-4019-85ac-ecb669eeb0d7";
+            queueClient = new QueueClient(ServiceBusConnectionString, QueueName, ReceiveMode.PeekLock);
+            items = new List<string>();
+            await Task.Factory.StartNew(() =>
+            {
+                queueClient = new QueueClient(ServiceBusConnectionString, QueueName, ReceiveMode.PeekLock);
+                var options = new MessageHandlerOptions(ExceptionMethod)
+                {
+                    MaxConcurrentCalls = 1,
+                    AutoComplete = false
+                };
+                queueClient.RegisterMessageHandler(ExecuteMessageProcessing, options);
+            });
+            return RedirectToAction("ReceiveNotificationResult");
+        }
+
+        //Part 2: Received Message from the Service Bus - get data step
+        private static async Task ExecuteMessageProcessing(Message message, CancellationToken arg2)
+        {
+            //var result = JsonConvert.DeserializeObject<Ostring>(Encoding.UTF8.GetString(message.Body));
+            // Console.WriteLine($"Order Id is {result.OrderId}, Order name is {result.OrderName} and quantity is {result.OrderQuantity}");
+            Console.WriteLine($"Received message: SequenceNumber:{message.SystemProperties.SequenceNumber} Body:{Encoding.UTF8.GetString(message.Body)}");
+            await queueClient.CompleteAsync(message.SystemProperties.LockToken);
+
+            items.Add(Encoding.UTF8.GetString(message.Body));
+        }
+
+        //Part 2: Received Message from the Service Bus
+        private static async Task ExceptionMethod(ExceptionReceivedEventArgs arg)
+        {
+            await Task.Run(() =>
+           Console.WriteLine($"Error occured. Error is {arg.Exception.Message}")
+           );
+        }
+        public IActionResult ReceiveNotificationResult()
+        {
+            if (items == null)
+            {
+                return RedirectToAction("ReceiveNotificationResult");
+            }
+            else
+            {
+                return View(items);
+            }
         }
     }
 }
