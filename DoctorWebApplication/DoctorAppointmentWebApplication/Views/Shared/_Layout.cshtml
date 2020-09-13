@@ -16,6 +16,42 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
+                <img src="~/Media/main-icon.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><b>&nbsp;Intelligent Hospital</b></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto d-sm-inline-flex flex-sm-row-reverse">
+                        <partial name="_LoginPartial" />
+                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("Patient"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ListUsers">Book Appointment</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ViewAppointment">Manage Appointments</a>
+                            </li>
+                        }
+                        else if (SignInManager.IsSignedIn(User) && User.IsInRole("Doctor"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Doctor" asp-action="ViewBookedAppointment">Appointment(s)</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Doctor" asp-action="PublishingAppointment">Schedule Timeslot</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Doctor" asp-action="ManageTimeSlots">Manage Timeslot</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        @*<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">DoctorAppointmentWebApplication</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +84,7 @@
                     </ul>
                 </div>
             </div>
-        </nav>
+        </nav>*@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
