@@ -1,0 +1,42 @@
+﻿.masthead {
+    height: 100%;
+    min-height :400vh;
+    width: 100%;
+    min-height: 500px;
+    background-image: url("/Media/home-background-img.png");
+    background-size : cover;
+    object-fit : contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin-top : -17px;
+}
+
+.home-body {
+    background-color: #FFCDCD; 
+}
+
+.page-section {
+    padding: 6rem 0;
+}
+
+.page-section h2.section-heading {
+    font-size: 2.5rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.page-section h3.section-subheading {
+    font-size: 1rem;
+    font-weight: 400;
+    font-style: italic;
+    font-family: "Droid Serif", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    margin-bottom: 4rem;
+}
+
+.my-3 {
+    margin-top: 1rem !important;
+}
+
+.my-3 {
+    margin-bottom: 1rem !important;
+}

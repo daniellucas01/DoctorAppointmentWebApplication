@@ -1,13 +1,57 @@
-﻿@{
+﻿ 
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
 
-<p>
+<header class="masthead">
+    <div class="container h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col-12 text-center">
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Page Content -->
+<section class="page-section" id="services">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase">Services</h2>
+            <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
+        </div>
+        <div class="row text-center">
+            <div class="col-md-4">
+                <span class="fa-stack fa-4x">
+                    <i class="fas fa-circle fa-stack-2x text-primary"></i>
+                    <i class="fas fa-shopping-cart fa-stack-1x fa-inverse"></i>
+                </span>
+                <h4 class="my-3">Portable Bookings</h4>
+                <p class="text-muted">Patients can now book appointments anytime and anywhere! With a click of a button.</p>
+            </div>
+            <div class="col-md-4">
+                <span class="fa-stack fa-4x">
+                    <i class="fas fa-circle fa-stack-2x text-primary"></i>
+                    <i class="fas fa-laptop fa-stack-1x fa-inverse"></i>
+                </span>
+                <h4 class="my-3">1-on-1 Sessions</h4>
+                <p class="text-muted">Patients are given the freedom to choose doctors and request for appointments with a click of a button.</p>
+            </div>
+            <div class="col-md-4">
+                <span class="fa-stack fa-4x">
+                    <i class="fas fa-circle fa-stack-2x text-primary"></i>
+                    <i class="fas fa-lock fa-stack-1x fa-inverse"></i>
+                </span>
+                <h4 class="my-3">Corona Screening</h4>
+                <p class="text-muted">Private corona screening is implemented when booking or requesting booking sessions with doctors.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@*<p>
     Id = @ViewBag.userId
     Phone Number = @ViewBag.phoneNumber
-</p>
+</p>*@
