@@ -18,6 +18,12 @@
       "type": "storage.azure",
       "connectionId": "AzureStorageConnection",
       "secretStore": "LocalSecretsFile"
+    },
+    "appInsights1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Insights/components/DoctorAppointmentWebApplicationAppInSights",
+      "type": "appInsights.azure",
+      "connectionId": "APPINSIGHTS_INSTRUMENTATIONKEY",
+      "secretStore": "LocalSecretsFile"
     }
   }
 }

@@ -39,6 +39,7 @@ namespace DoctorAppointmentWebApplication
                 builder.AddBlobServiceClient(Configuration["ConnectionStrings:AzureStorageConnection:blob"], preferMsi: true);
                 builder.AddQueueServiceClient(Configuration["ConnectionStrings:AzureStorageConnection:queue"], preferMsi: true);
             });
+            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
