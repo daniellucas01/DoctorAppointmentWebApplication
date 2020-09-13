@@ -54,8 +54,8 @@
                                 To the best of your knowledge have you been in close proximity to any individual who tested positive for COVID-19?
                             </div>
                             <div class="modal-footer">
-                                <form asp-action="UpdatePublished" asp-route-id="@appointment.PartitionKey" asp-route-rowkey="@appointment.RowKey" asp-route-coronaRisk="High"><button class="btn btn-success" type="submit">Yes, I have</button></form>
-                                <form asp-action="UpdatePublished" asp-route-id="@appointment.PartitionKey" asp-route-rowkey="@appointment.RowKey" asp-route-coronaRisk="Low"><button class="btn btn-danger" type="submit">No, I haven't </button></form>
+                                <form asp-action="UpdatePublished" asp-route-id="@appointment.PartitionKey" asp-route-rowkey="@appointment.RowKey" asp-route-coronaRisk="High" asp-route-doctorId="@appointment.DoctorID"><button class="btn btn-success" type="submit">Yes, I have</button></form>
+                                <form asp-action="UpdatePublished" asp-route-id="@appointment.PartitionKey" asp-route-rowkey="@appointment.RowKey" asp-route-coronaRisk="Low" asp-route-doctorId="@appointment.DoctorID"><button class="btn btn-danger" type="submit">No, I haven't </button></form>
                             </div>
                         </div>
                     </div>

@@ -52,7 +52,7 @@ namespace DoctorAppointmentWebApplication.Controllers
             IConfigurationRoot configure = builder.Build();
 
             CloudStorageAccount objectaccount = CloudStorageAccount
-                .Parse(configure["ConnectionStrings:BlobStorageConnectionString"]);
+                .Parse(configure["ConnectionStrings:AzureStorageConnection"]);
 
             CloudBlobClient blobclientagent = objectaccount.CreateCloudBlobClient();
 

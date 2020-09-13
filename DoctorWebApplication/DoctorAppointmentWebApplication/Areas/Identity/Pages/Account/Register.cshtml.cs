@@ -118,7 +118,7 @@ namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account
             //to get key access
             //once link, time to read the content to get the connectiontring
             CloudStorageAccount objectaccount =
-                CloudStorageAccount.Parse(configure["Connectionstrings:BlobStorageConnectionString"]);
+                CloudStorageAccount.Parse(configure["Connectionstrings:AzureStorageConnection"]);
 
             CloudBlobClient blobclientagent = objectaccount.CreateCloudBlobClient();
 
@@ -146,7 +146,7 @@ namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account
         {
             string photoId = Guid.NewGuid().ToString("N");
             UploadBlob(files, photoId);
-            string imageURLFromBlob = String.Concat("https://blobstoragetp047067stora.blob.core.windows.net/user-profile-picture/", photoId, ".jpg");
+            string imageURLFromBlob = String.Concat("https://doctorappointmentwebappl.blob.core.windows.net/user-profile-picture/", photoId, ".jpg");
             returnUrl = returnUrl ?? Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)

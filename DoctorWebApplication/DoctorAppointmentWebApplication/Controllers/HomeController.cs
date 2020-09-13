@@ -16,6 +16,8 @@ using Microsoft.WindowsAzure.Storage.Table;
 using System.IO;
 using DoctorAppointmentWebApplication.Models;
 using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
+using Microsoft.Azure.ServiceBus;
+using System.Text;
 
 namespace DoctorAppointmentWebApplication.Controllers
 {
@@ -23,8 +25,11 @@ namespace DoctorAppointmentWebApplication.Controllers
     [Authorize(Roles = "Patient")]
     public class HomeController : Controller
     {
+        const string ServiceBusConnectionString = "Endpoint=sb://intelligent-appointment.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=56CeLsG3ZgEKnMjjGn2LAuFbCQQebgb0PiXdLAuIvvQ=";
+        static IQueueClient queueClient;
         private readonly UserManager<DoctorAppointmentWebApplicationUser> userManager;
         private DoctorAppointmentWebApplicationContext _application;
+
         /*private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
@@ -127,6 +132,7 @@ namespace DoctorAppointmentWebApplication.Controllers
             patient.CreatedBy = "Patient";
             patient.CoronaRisk = coronaRisk;
 
+            /*queueClient = new QueueClient(ServiceBusConnectionString, QueueName);*/
 
             // Specify the Time Zone to prevent Table Storage to convert the Date Time to UTC
             var utcDate = DateTime.SpecifyKind(myDate, DateTimeKind.Utc); 
@@ -141,6 +147,7 @@ namespace DoctorAppointmentWebApplication.Controllers
                 table.ExecuteAsync(tableOperation);
                 ViewBag.TableName = table.Name;
                 ViewBag.msg = "Insert Success!";
+                sendMessageAsync(myDoctorID, myUserName, utcDate.ToString(), utcTime.ToString(), coronaRisk);
                 return RedirectToAction("ListUsers", "Home");
             }
             catch (Exception ex)
@@ -148,6 +155,39 @@ namespace DoctorAppointmentWebApplication.Controllers
                 ViewBag.msg = "Unable to insert the data. Error :" + ex.ToString();
             }
             return View();
+        }
+
+        public string RetrieveAzureServiceBusConnection()
+        {
+            //read json
+            var builder = new ConfigurationBuilder()
+                            .SetBasePath(Directory.GetCurrentDirectory())
+                            .AddJsonFile("appsettings.json");
+            IConfigurationRoot configure = builder.Build();
+
+            //to get key access
+            //once link, time to read the content to get the connectiontring
+            return configure["Connectionstrings:ServiceBusConnection"];
+        }
+
+        public async Task sendMessageAsync(string QueueName, string myUserName, string utcDate, string utcTime, string coronaRisk)
+        {
+            queueClient = new QueueClient(RetrieveAzureServiceBusConnection(), "18e39f84-332c-4019-85ac-ecb669eeb0d7");
+            try
+            {
+                    string messageBody = $"Message {myUserName + " has request for an appointment on " + utcDate + " " + utcTime + ". This patient has " + coronaRisk + "Corona Risk"}";
+                    var message = new Microsoft.Azure.ServiceBus.Message(Encoding.UTF8.GetBytes(messageBody));
+
+                    // Write the body of the message to the console.
+                    Trace.WriteLine($"Sending message: {messageBody}");
+
+                    // Send the message to the queue.
+                    await queueClient.SendAsync(message);
+            }
+            catch (Exception exception)
+            {
+                ViewBag.msg = exception.ToString();
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -169,7 +209,7 @@ namespace DoctorAppointmentWebApplication.Controllers
 
             //link storage account with access key
             CloudStorageAccount storageaccount =
-                CloudStorageAccount.Parse(configure["ConnectionStrings:tablestorageconnection"]);
+                CloudStorageAccount.Parse(configure["ConnectionStrings:AzureStorageConnection"]);
 
             CloudTableClient tableClient = storageaccount.CreateCloudTableClient();
 
@@ -347,6 +387,7 @@ namespace DoctorAppointmentWebApplication.Controllers
         {
             string rowkey = "";
             string coronaRisk = "";
+            string doctorId = "";
             if (!String.IsNullOrEmpty(HttpContext.Request.Query["rowkey"]))
             {
                 rowkey = HttpContext.Request.Query["rowkey"];
@@ -354,6 +395,10 @@ namespace DoctorAppointmentWebApplication.Controllers
             if (!String.IsNullOrEmpty(HttpContext.Request.Query["coronaRisk"]))
             {
                 coronaRisk = HttpContext.Request.Query["coronaRisk"];
+            }
+            if (!String.IsNullOrEmpty(HttpContext.Request.Query["doctorId"]))
+            {
+                doctorId = HttpContext.Request.Query["doctorId"];
             }
             Trace.WriteLine("PartitionKey" + id);
             Trace.WriteLine("Rowkey" + rowkey);
@@ -387,6 +432,7 @@ namespace DoctorAppointmentWebApplication.Controllers
 
                 // Execute the operation.
                 await table.ExecuteAsync(insertOrReplaceOperation);
+                sendMessageAsync(doctorId, user.Result.Name,updateEntity.AppointmentDate.ToString(), updateEntity.AppointmentTime.ToString() ,coronaRisk);
             }
             Console.WriteLine("Appointment is booked");
             return RedirectToAction("ViewAppointment", "Home");

@@ -13,13 +13,20 @@ using Microsoft.WindowsAzure.Storage.Table;
 using DoctorAppointmentWebApplication.Models;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Azure.ServiceBus;
+using System.Text;
+using System.Threading;
 
 namespace DoctorAppointmentWebApplication.Controllers
 {
+    [Authorize(Roles = "Doctor")]
     public class DoctorController : Controller
-
-        //INI CONTROLLER BUAT DOKTER (PUBLISHING ) NANTI KASIH AUTHORIZATION SAMA KAYAK HOME CONTROLLER --> ALGO PART
     {
+        const string ServiceBusConnectionString = "Endpoint=sb://azureservicebustp047067.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=27AeQCdxa6yeB3QzMTfmALnX+gdDWwvF/5sUiUdCgAs=";
+        /*const string QueueName = "18e39f84-332c-4019-85ac-ecb669eeb0d7";*/
+        static IQueueClient queueClient;
+        static List<string> notifications;
         private readonly UserManager<DoctorAppointmentWebApplicationUser> userManager;
         private DoctorAppointmentWebApplicationContext _application;
 
@@ -36,7 +43,7 @@ namespace DoctorAppointmentWebApplication.Controllers
 
             //link storage account with access key
             CloudStorageAccount storageaccount =
-                CloudStorageAccount.Parse(configure["ConnectionStrings:tablestorageconnection"]);
+                CloudStorageAccount.Parse(configure["ConnectionStrings:AzureStorageConnection"]);
 
             CloudTableClient tableClient = storageaccount.CreateCloudTableClient();
 
@@ -74,7 +81,7 @@ namespace DoctorAppointmentWebApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult PublishingAppointment (DateTime myDate, DateTime myTime, string myUserID, string myUserName, string myPhoneNumber)
+        public IActionResult PublishingAppointment(DateTime myDate, DateTime myTime, string myUserID, string myUserName, string myPhoneNumber)
         {
             CloudTable table = GetTableInformation();
 
@@ -171,7 +178,7 @@ namespace DoctorAppointmentWebApplication.Controllers
             CloudTable table = GetTableInformation();
 
             TableOperation retrieveTimeSlotDetails = TableOperation.Retrieve<AppointmentEntity>(id, rowkey);
-            
+
             TableResult retrievedResult = await table.ExecuteAsync(retrieveTimeSlotDetails);
 
             AppointmentEntity updateEntity = (AppointmentEntity)retrievedResult.Result;
@@ -349,6 +356,68 @@ namespace DoctorAppointmentWebApplication.Controllers
                 }
             }
             return RedirectToAction("ViewBookedAppointment", "Doctor");
+        }
+
+        public string RetrieveAzureServiceBusConnection()
+        {
+            //read json
+            var builder = new ConfigurationBuilder()
+                            .SetBasePath(Directory.GetCurrentDirectory())
+                            .AddJsonFile("appsettings.json");
+            IConfigurationRoot configure = builder.Build();
+
+            //to get key access
+            //once link, time to read the content to get the connectiontring
+            return configure["Connectionstrings:ServiceBusConnection"];
+        }
+
+        public async Task<IActionResult> ReceiveNotification()
+        {
+            // var QueueName = userManager.GetUserId(HttpContext.User);
+            var QueueName = "18e39f84-332c-4019-85ac-ecb669eeb0d7";
+            notifications = new List<string>();
+            await Task.Factory.StartNew(() =>
+            {
+                queueClient = new QueueClient(RetrieveAzureServiceBusConnection(), QueueName, ReceiveMode.PeekLock);
+                var options = new MessageHandlerOptions(ExceptionMethod)
+                {
+                    MaxConcurrentCalls = 1,
+                    AutoComplete = false
+                };
+                queueClient.RegisterMessageHandler(ExecuteMessageProcessing, options);
+            });
+            return RedirectToAction("ReceiveNotificationResult");
+        }
+
+        // Receiving message from service bus
+
+        private static async Task ExecuteMessageProcessing(Message message, CancellationToken token)
+        {
+            // To check the received message on console
+            Trace.WriteLine($"Receiving Message Number : {message.SystemProperties.SequenceNumber}" +
+                $"\n The message data is : {Encoding.UTF8.GetString(message.Body)}");
+            await queueClient.CompleteAsync(message.SystemProperties.LockToken);
+
+            notifications.Add(Encoding.UTF8.GetString(message.Body));
+        }
+
+        //Part 2: Received Message from the Service Bus
+        private static async Task ExceptionMethod(ExceptionReceivedEventArgs arg)
+        {
+            await Task.Run(() =>
+           Console.WriteLine($"Error occured. Error is {arg.Exception.Message}")
+           );
+        }
+        public IActionResult ReceiveNotificationResult()
+        {
+            if (notifications == null)
+            {
+                return RedirectToAction("ReceiveNotificationResult");
+            }
+            else
+            {
+                return View(notifications);
+            }
         }
     }
 }
