@@ -63,3 +63,12 @@
     padding-top: 120px;
 }
 
+.custom-image-size {
+    width: 100%;
+    min-height: 120px;
+    max-height: auto;
+    float: left;
+    margin: 3px;
+    padding: 3px;
+}
+

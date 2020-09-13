@@ -19,6 +19,7 @@ using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 
 namespace DoctorAppointmentWebApplication.Controllers
 {
+
     [Authorize(Roles = "Patient")]
     public class HomeController : Controller
     {
