@@ -25,9 +25,8 @@ namespace DoctorAppointmentWebApplication.Controllers
     [Authorize(Roles = "Patient")]
     public class HomeController : Controller
     {
-        const string ServiceBusConnectionString = "Endpoint=sb://azureservicebustp047067.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=27AeQCdxa6yeB3QzMTfmALnX+gdDWwvF/5sUiUdCgAs=";
+        const string ServiceBusConnectionString = "Endpoint=sb://intelligent-appointment.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=56CeLsG3ZgEKnMjjGn2LAuFbCQQebgb0PiXdLAuIvvQ=";
         static IQueueClient queueClient;
-        static List<string> items;
         private readonly UserManager<DoctorAppointmentWebApplicationUser> userManager;
         private DoctorAppointmentWebApplicationContext _application;
 
@@ -158,12 +157,24 @@ namespace DoctorAppointmentWebApplication.Controllers
             return View();
         }
 
+        public string RetrieveAzureServiceBusConnection()
+        {
+            //read json
+            var builder = new ConfigurationBuilder()
+                            .SetBasePath(Directory.GetCurrentDirectory())
+                            .AddJsonFile("appsettings.json");
+            IConfigurationRoot configure = builder.Build();
+
+            //to get key access
+            //once link, time to read the content to get the connectiontring
+            return configure["Connectionstrings:ServiceBusConnection"];
+        }
+
         public async Task sendMessageAsync(string QueueName, string myUserName, string utcDate, string utcTime, string coronaRisk)
         {
-            queueClient = new QueueClient(ServiceBusConnectionString, "18e39f84-332c-4019-85ac-ecb669eeb0d7");
+            queueClient = new QueueClient(RetrieveAzureServiceBusConnection(), "18e39f84-332c-4019-85ac-ecb669eeb0d7");
             try
             {
-                
                     string messageBody = $"Message {myUserName + " has request for an appointment on " + utcDate + " " + utcTime + ". This patient has " + coronaRisk + "Corona Risk"}";
                     var message = new Microsoft.Azure.ServiceBus.Message(Encoding.UTF8.GetBytes(messageBody));
 
@@ -198,7 +209,7 @@ namespace DoctorAppointmentWebApplication.Controllers
 
             //link storage account with access key
             CloudStorageAccount storageaccount =
-                CloudStorageAccount.Parse(configure["ConnectionStrings:tablestorageconnection"]);
+                CloudStorageAccount.Parse(configure["ConnectionStrings:AzureStorageConnection"]);
 
             CloudTableClient tableClient = storageaccount.CreateCloudTableClient();
 

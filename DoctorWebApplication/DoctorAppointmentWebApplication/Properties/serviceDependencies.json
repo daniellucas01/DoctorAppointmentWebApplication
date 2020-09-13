@@ -13,7 +13,7 @@
     },
     "storage1": {
       "type": "storage",
-      "connectionId": "tablestorageconnection"
+      "connectionId": "AzureStorageConnection"
     }
   }
 }

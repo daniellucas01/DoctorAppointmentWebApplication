@@ -90,7 +90,7 @@ namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account.Manage
             //to get key access
             //once link, time to read the content to get the connectiontring
             CloudStorageAccount objectaccount =
-                CloudStorageAccount.Parse(configure["Connectionstrings:BlobStorageConnectionString"]);
+                CloudStorageAccount.Parse(configure["Connectionstrings:AzureStorageConnection"]);
 
             CloudBlobClient blobclientagent = objectaccount.CreateCloudBlobClient();
 

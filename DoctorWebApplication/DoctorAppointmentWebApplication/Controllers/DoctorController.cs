@@ -25,10 +25,8 @@ namespace DoctorAppointmentWebApplication.Controllers
     {
         const string ServiceBusConnectionString = "Endpoint=sb://azureservicebustp047067.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=27AeQCdxa6yeB3QzMTfmALnX+gdDWwvF/5sUiUdCgAs=";
         /*const string QueueName = "18e39f84-332c-4019-85ac-ecb669eeb0d7";*/
-        public const string Namespace = "azureservicebustp047067";
-
         static IQueueClient queueClient;
-        static List<string> items;
+        static List<string> notifications;
         private readonly UserManager<DoctorAppointmentWebApplicationUser> userManager;
         private DoctorAppointmentWebApplicationContext _application;
 
@@ -45,7 +43,7 @@ namespace DoctorAppointmentWebApplication.Controllers
 
             //link storage account with access key
             CloudStorageAccount storageaccount =
-                CloudStorageAccount.Parse(configure["ConnectionStrings:tablestorageconnection"]);
+                CloudStorageAccount.Parse(configure["ConnectionStrings:AzureStorageConnection"]);
 
             CloudTableClient tableClient = storageaccount.CreateCloudTableClient();
 
@@ -360,14 +358,27 @@ namespace DoctorAppointmentWebApplication.Controllers
             return RedirectToAction("ViewBookedAppointment", "Doctor");
         }
 
-        public async Task<IActionResult> ReceiveNotification(string QueueName)
+        public string RetrieveAzureServiceBusConnection()
         {
-            QueueName = "18e39f84-332c-4019-85ac-ecb669eeb0d7";
-            queueClient = new QueueClient(ServiceBusConnectionString, QueueName, ReceiveMode.PeekLock);
-            items = new List<string>();
+            //read json
+            var builder = new ConfigurationBuilder()
+                            .SetBasePath(Directory.GetCurrentDirectory())
+                            .AddJsonFile("appsettings.json");
+            IConfigurationRoot configure = builder.Build();
+
+            //to get key access
+            //once link, time to read the content to get the connectiontring
+            return configure["Connectionstrings:ServiceBusConnection"];
+        }
+
+        public async Task<IActionResult> ReceiveNotification()
+        {
+            // var QueueName = userManager.GetUserId(HttpContext.User);
+            var QueueName = "18e39f84-332c-4019-85ac-ecb669eeb0d7";
+            notifications = new List<string>();
             await Task.Factory.StartNew(() =>
             {
-                queueClient = new QueueClient(ServiceBusConnectionString, QueueName, ReceiveMode.PeekLock);
+                queueClient = new QueueClient(RetrieveAzureServiceBusConnection(), QueueName, ReceiveMode.PeekLock);
                 var options = new MessageHandlerOptions(ExceptionMethod)
                 {
                     MaxConcurrentCalls = 1,
@@ -378,15 +389,16 @@ namespace DoctorAppointmentWebApplication.Controllers
             return RedirectToAction("ReceiveNotificationResult");
         }
 
-        //Part 2: Received Message from the Service Bus - get data step
-        private static async Task ExecuteMessageProcessing(Message message, CancellationToken arg2)
+        // Receiving message from service bus
+
+        private static async Task ExecuteMessageProcessing(Message message, CancellationToken token)
         {
-            //var result = JsonConvert.DeserializeObject<Ostring>(Encoding.UTF8.GetString(message.Body));
-            // Console.WriteLine($"Order Id is {result.OrderId}, Order name is {result.OrderName} and quantity is {result.OrderQuantity}");
-            Console.WriteLine($"Received message: SequenceNumber:{message.SystemProperties.SequenceNumber} Body:{Encoding.UTF8.GetString(message.Body)}");
+            // To check the received message on console
+            Trace.WriteLine($"Receiving Message Number : {message.SystemProperties.SequenceNumber}" +
+                $"\n The message data is : {Encoding.UTF8.GetString(message.Body)}");
             await queueClient.CompleteAsync(message.SystemProperties.LockToken);
 
-            items.Add(Encoding.UTF8.GetString(message.Body));
+            notifications.Add(Encoding.UTF8.GetString(message.Body));
         }
 
         //Part 2: Received Message from the Service Bus
@@ -398,13 +410,13 @@ namespace DoctorAppointmentWebApplication.Controllers
         }
         public IActionResult ReceiveNotificationResult()
         {
-            if (items == null)
+            if (notifications == null)
             {
                 return RedirectToAction("ReceiveNotificationResult");
             }
             else
             {
-                return View(items);
+                return View(notifications);
             }
         }
     }

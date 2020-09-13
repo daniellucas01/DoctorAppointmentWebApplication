@@ -36,8 +36,8 @@ namespace DoctorAppointmentWebApplication
             services.AddMvc().AddControllersAsServices();
             services.AddAzureClients(builder =>
             {
-                builder.AddBlobServiceClient(Configuration["ConnectionStrings:tablestorageconnection:blob"], preferMsi: true);
-                builder.AddQueueServiceClient(Configuration["ConnectionStrings:tablestorageconnection:queue"], preferMsi: true);
+                builder.AddBlobServiceClient(Configuration["ConnectionStrings:AzureStorageConnection:blob"], preferMsi: true);
+                builder.AddQueueServiceClient(Configuration["ConnectionStrings:AzureStorageConnection:queue"], preferMsi: true);
             });
         }
 
