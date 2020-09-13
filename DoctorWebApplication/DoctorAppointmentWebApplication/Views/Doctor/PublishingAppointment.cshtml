@@ -3,7 +3,7 @@
     ViewData["Title"] = "PublishingAppointment";
 }
 
-<center>
+@*<center>
     <h1>Publish Appointment</h1>
 
     <form method="post" action="PublishingAppointment">
@@ -19,6 +19,40 @@
     </form>
 
 
-</center>
+</center>*@
 
 
+<main class="booking-form">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">Schedule Timeslot</div>
+                    <div class="card-body">
+                        <form method="post" action="PublishingAppointment">
+                            <input type="hidden" value="@ViewBag.userName" name="myUserName" />
+                            <input type="hidden" value="@ViewBag.phoneNumber" name="myPhoneNumber" />
+                            <input type="hidden" value="@ViewBag.userId" name="myUserID" />
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label text-md-right">Date</label>
+                                <div class="col-md-6">
+                                    <input type="date" value="" name="myDate" required class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="user_name" class="col-md-4 col-form-label text-md-right">Time</label>
+                                <div class="col-md-6">
+                                    <input type="time" value="" name="myTime" required class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6 offset-md-4">
+                                <input type="submit" value="Publish Appointment" name="submit" class="btn btn-primary">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

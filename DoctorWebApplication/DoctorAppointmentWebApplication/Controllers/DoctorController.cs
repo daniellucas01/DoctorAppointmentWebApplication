@@ -96,14 +96,12 @@ namespace DoctorAppointmentWebApplication.Controllers
                 table.ExecuteAsync(tableOperation);
                 ViewBag.TableName = table.Name;
                 ViewBag.msg = "Insert Success!";
-                return RedirectToAction("ListUsers", "Home");
+                return RedirectToAction("ManageTimeSlots");
             }
             catch (Exception ex)
             {
                 ViewBag.msg = "Unable to insert the data. Error :" + ex.ToString();
             }
-
-
             return View();
         }
 
