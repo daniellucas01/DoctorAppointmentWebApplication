@@ -21,6 +21,7 @@ using System.Text;
 
 namespace DoctorAppointmentWebApplication.Controllers
 {
+
     [Authorize(Roles = "Patient")]
     public class HomeController : Controller
     {

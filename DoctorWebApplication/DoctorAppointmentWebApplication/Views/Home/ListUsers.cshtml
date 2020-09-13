@@ -31,12 +31,23 @@
                 @if (user.Role.Equals("Doctor", StringComparison.InvariantCultureIgnoreCase))
                 {
                     <div class="col-sm-6 mt-2 mb-2">
-                        <div class="card">
-                            <div class="card-body">
+                        <div class="card border-dark">
+                            @{ 
+                                var imageLink = "";
+                                if (String.IsNullOrEmpty(user.ImageURL))
+                                {
+                                    imageLink = "~/Media/main-icon.svg";
+                                }
+                                else {
+                                    imageLink = user.ImageURL;
+                                }
+                            }
+                            <img class="card-img-top" src="@imageLink" height="400"/>
+                            <div class="card-body border-dark">
                                 <h5 class="card-title">@user.Name</h5>
                                 <p class="card-text">Doctor at Intelligent Hospital</p>
                                 <p class="card-text">@user.PhoneNumber</p>
-                                <a class="btn btn-primary" asp-action="ViewPublishAppointment" asp-route-id="@user.Id" asp-route-name="@user.Name" asp-route-phone-number="@user.PhoneNumber">Book Appointment</a>
+                                <a class="btn btn-primary text-right" asp-action="ViewPublishAppointment" asp-route-id="@user.Id" asp-route-name="@user.Name" asp-route-phone-number="@user.PhoneNumber">Book Appointment</a>
                             </div>
                         </div>
                     </div>
