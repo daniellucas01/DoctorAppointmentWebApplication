@@ -21,6 +21,8 @@ using System.IO;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.AspNetCore.Http;
 using DoctorAppointmentWebApplication.Controllers;
+using System.Diagnostics;
+using Microsoft.Azure.ServiceBus.Management;
 
 namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account
 {
@@ -189,6 +191,11 @@ namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
+                        if (Input.Role.Equals("Doctor", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            Trace.WriteLine("INI USER IDNYA : " + user.Id + "    USING FUNCTION: " + _userManager.GetUserId(HttpContext.User));
+                            await createServiceBusQueueAsync(user.Id);
+                        }
                         return LocalRedirect(returnUrl);
                     }
                 }
@@ -200,6 +207,23 @@ namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account
 
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        const string ServiceBusConnectionString = "Endpoint=sb://azureservicebustp047067.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=27AeQCdxa6yeB3QzMTfmALnX+gdDWwvF/5sUiUdCgAs=";
+        private async Task createServiceBusQueueAsync(string queueName)
+        {
+            var client = new ManagementClient(ServiceBusConnectionString);
+
+            if (!await client.QueueExistsAsync(queueName).ConfigureAwait(false))
+            {
+                await client.CreateQueueAsync(new QueueDescription(queueName)
+                {
+                    MaxDeliveryCount = 5,
+                    LockDuration = TimeSpan.FromSeconds(30),
+                    MaxSizeInMB = 1024,
+                    EnableBatchedOperations = true
+                }).ConfigureAwait(false);
+            }
         }
     }
 }
