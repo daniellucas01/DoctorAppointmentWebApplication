@@ -64,10 +64,10 @@ namespace DoctorAppointmentWebApplication.Controllers
         {
 
             var users = userManager.Users;
-
+            Trace.WriteLine(DoctorName);
             if (DoctorName != null)
             {
-                users = userManager.Users.Where(x => x.Name.Equals(DoctorName));
+                users = userManager.Users.Where(x => x.Name.Contains(DoctorName));
             }
            
            

@@ -7,14 +7,19 @@
 <h1 class="ml-4">Choose a doctor</h1>
 
 <center>
-    <form method="get" action="ListUsers">
-        <p>Search by Doctor Name :<input type="text" value="" name="DoctorName"></p>
-        <p><input type="submit" value="search" name="submit"></p>
-
-    </form>
-
+    <div class="input-group mb-3 pt-4">
+        <div class="form-group col-md-12">
+            <form method="get" action="ListUsers">
+                <div class="input-group mb-3">
+                    <input type="text" value="" name="DoctorName" class="form-control" placeholder="Please enter a doctor's name">
+                    <div class="input-group-append">
+                        <input class="btn btn-outline-dark" type="submit" value="Search Doctor" name="submit">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </center>
-
 <br />
 
 @if (Model.Any())
