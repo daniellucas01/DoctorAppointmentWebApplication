@@ -54,9 +54,23 @@
     text-align:center;
 }
 
+.custom-card-text2 {
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    left: 60%;
+    transform: translateX(-50%) translateY(-50%);
+    text-align: center;
+}
+
 .custom-time-text {
     font-family: Arvo;
     font-size: 30px;
+}
+
+.custom-sub-text {
+    font-family: Arvo;
+    font-size: 18px;
 }
 
 .custom-404-padding{
@@ -70,5 +84,9 @@
     float: left;
     margin: 3px;
     padding: 3px;
+}
+
+.float-right {
+    float: right;
 }
 
