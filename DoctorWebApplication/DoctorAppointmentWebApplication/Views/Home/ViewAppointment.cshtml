@@ -4,15 +4,15 @@
     ViewData["Title"] = "ViewAppointment";
 }
 
-<h1><u>Manage Appointments</u></h1>
+<h1>Manage Appointments</h1>
 <br />
 
 @if (Model.Any())
 {
     @foreach (var patient in Model)
     {
-        <div class="card mb-3">
-            <div class="card-body">
+        <div class="card mb-3 border-dark">
+            <div class="card-body border-dark">
                 <h4 class="card-title">@patient.DoctorName</h4>
                 <h5>@patient.DoctorNumber</h5>
                 @{
@@ -21,7 +21,7 @@
                 }
                 <p><small>@date    @time</small></p>
             </div>
-            <div class="card-footer">
+            <div class="card-footer bg-dark border-3 border-dark">
                 @{
                     var uniqueModalID = "a" + patient.RowKey.ToString();
                 }
@@ -48,28 +48,6 @@
                         </div>
                     </div>
                 </div>
-                @*@if (ViewBag.msg != null) {
-           <div class="modal fade" id="deleteStatusModal" tabindex="-1" role="dialog">
-               <div class="modal-dialog" role="document">
-                   <div class="modal-content">
-                       <div class="modal-header">
-                           <h5 class="modal-title" id="deleteStatusModalLabel">@ViewBag.msg</h5>
-                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                               <span aria-hidden="true">&times;</span>
-                           </button>
-                       </div>
-                       <div class="modal-footer">
-                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
-                       </div>
-                   </div>
-               </div>
-           </div>
-           <script>
-               $(function() {
-               $("#deleteStatusModal ").dialog();
-               });
-           </script>
-        }*@
             </div>
         </div>
     }
