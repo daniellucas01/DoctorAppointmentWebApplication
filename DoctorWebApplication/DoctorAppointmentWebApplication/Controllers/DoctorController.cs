@@ -55,11 +55,6 @@ namespace DoctorAppointmentWebApplication.Controllers
             this._application = application;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         public ActionResult PublishingAppointment()
         {
             if (userManager != null) //fetching the logged information 

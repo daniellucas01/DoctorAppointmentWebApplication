@@ -40,18 +40,6 @@ namespace DoctorAppointmentWebApplication.Controllers
             _application = application;
         }*/
 
-        public IActionResult Index()
-        {
-            if (userManager != null)
-            {
-                var userId = userManager.GetUserId(HttpContext.User);
-                ViewBag.userId = userId;
-                var user = userManager.GetUserAsync(User);
-                ViewBag.phoneNumber = user.Result.PhoneNumber;
-            }
-            return View();
-        }
-
         public IActionResult Privacy()
         {
             return View();
