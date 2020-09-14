@@ -67,7 +67,7 @@ namespace DoctorAppointmentWebApplication
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=LoginGateway}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
         }
