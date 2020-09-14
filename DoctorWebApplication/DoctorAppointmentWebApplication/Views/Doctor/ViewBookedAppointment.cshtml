@@ -40,7 +40,7 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                Deleting the appointment will delete the appointment session made previously by you as a user.
+                                Deleting the appointment will delete the time slot as well as the registered appointment booked by a patient. Before proceeding deletion, it is always wise to notify the patient.
                             </div>
                             <div class="modal-footer">
                                 <form asp-action="DeleteAppointment" asp-route-rowkey="@patient.RowKey"><button class="btn btn-danger" type="submit">Delete Appointment</button></form>
