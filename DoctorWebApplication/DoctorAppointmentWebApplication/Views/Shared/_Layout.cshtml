@@ -37,7 +37,7 @@
                         @if (SignInManager.IsSignedIn(User) && User.IsInRole("Patient"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ListUsers">Book Appointment</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="DoctorList">Book Appointment</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ViewAppointment">Manage Appointments</a>
@@ -75,7 +75,7 @@
                         @if (SignInManager.IsSignedIn(User) && User.IsInRole("Patient"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ListUsers">Book Appointment</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="DoctorList">Book Appointment</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ViewAppointment">Manage Appointments</a>

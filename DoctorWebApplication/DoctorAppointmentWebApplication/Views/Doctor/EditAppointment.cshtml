@@ -1,10 +1,10 @@
 ﻿@model DoctorAppointmentWebApplication.Models.AppointmentEntity
 
 @{
-    ViewData["Title"] = "EditAppointmentAsync";
+    ViewData["Title"] = "EditAppointment";
 }
 
-<h1>EditAppointmentAsync</h1>
+<h1>EditAppointment</h1>
 
 <h4>AppointmentEntity</h4>
 <hr />
@@ -22,8 +22,66 @@
                 <input type="time" asp-for="AppointmentTime" class="form-control" />
                 <span asp-validation-for="AppointmentTime" class="text-danger"></span>
             </div>
-            <input type="hidden" asp-for="PartitionKey" class="form-control" />
-            <input type="hidden" asp-for="RowKey" class="form-control" />
+            <div class="form-group" style="display:none">
+                <label asp-for="PatientID" class="control-label"></label>
+                <input asp-for="PatientID" class="form-control" />
+                <span asp-validation-for="PatientID" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="display:none">
+                <label asp-for="DoctorID" class="control-label"></label>
+                <input asp-for="DoctorID" class="form-control" />
+                <span asp-validation-for="DoctorID" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="display:none">
+                <label asp-for="PatientName" class="control-label"></label>
+                <input asp-for="PatientName" class="form-control" />
+                <span asp-validation-for="PatientName" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="display:none">
+                <label asp-for="DoctorName" class="control-label"></label>
+                <input asp-for="DoctorName" class="form-control" />
+                <span asp-validation-for="DoctorName" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="display:none">
+                <label asp-for="PatientNumber" class="control-label"></label>
+                <input asp-for="PatientNumber" class="form-control" />
+                <span asp-validation-for="PatientNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="display:none">
+                <label asp-for="DoctorNumber" class="control-label"></label>
+                <input asp-for="DoctorNumber" class="form-control" />
+                <span asp-validation-for="DoctorNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="display:none">
+                <label asp-for="CreatedBy" class="control-label"></label>
+                <input asp-for="CreatedBy" class="form-control" />
+                <span asp-validation-for="CreatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="display:none">
+                <label asp-for="CoronaRisk" class="control-label"></label>
+                <input asp-for="CoronaRisk" class="form-control" />
+                <span asp-validation-for="CoronaRisk" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="display:none">
+                <label asp-for="PartitionKey" class="control-label"></label>
+                <input asp-for="PartitionKey" class="form-control" />
+                <span asp-validation-for="PartitionKey" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="display:none">
+                <label asp-for="RowKey" class="control-label"></label>
+                <input asp-for="RowKey" class="form-control" />
+                <span asp-validation-for="RowKey" class="text-danger"></span>
+            </div>
+            @*<div class="form-group" style="display:none">
+                <label asp-for="Timestamp" class="control-label"></label>
+                <input asp-for="Timestamp" class="form-control" />
+                <span asp-validation-for="Timestamp" class="text-danger"></span>
+            </div>*@
+            <div class="form-group" style="display:none">
+                <label asp-for="ETag" class="control-label"></label>
+                <input asp-for="ETag" class="form-control" />
+                <span asp-validation-for="ETag" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -32,6 +90,6 @@
 </div>
 
 <div>
-    <a asp-action="ViewBookedAppointment">Back to List</a>
+    <a asp-action="Index">Back to List</a>
 </div>
 

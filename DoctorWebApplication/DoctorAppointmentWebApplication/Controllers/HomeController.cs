@@ -66,17 +66,13 @@ namespace DoctorAppointmentWebApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult ListUsers(string DoctorName)
+        public IActionResult DoctorList(string DoctorName)
         {
-
-            var users = userManager.Users;
-            Trace.WriteLine(DoctorName);
+            var users = userManager.Users.Where(x => x.Role.Equals("doctor"));
             if (DoctorName != null)
             {
-                users = userManager.Users.Where(x => x.Name.Contains(DoctorName));
+                users = userManager.Users.Where(x => x.Name.Contains(DoctorName) && x.Role.Equals("doctor"));
             }
-           
-           
             return View(users);
         }
 
@@ -148,7 +144,7 @@ namespace DoctorAppointmentWebApplication.Controllers
                 ViewBag.TableName = table.Name;
                 ViewBag.msg = "Insert Success!";
                 sendMessageAsync(myDoctorID, myUserName, utcDate.ToString(), utcTime.ToString(), coronaRisk);
-                return RedirectToAction("ListUsers", "Home");
+                return RedirectToAction("DoctorList", "Home");
             }
             catch (Exception ex)
             {
@@ -321,13 +317,10 @@ namespace DoctorAppointmentWebApplication.Controllers
 
         public ActionResult CreateTable()
         {
-            // link the table information
-            CloudTable table = GetTableInformation();
-            //create table with the mentioned name if not yet exist in storage
-            ViewBag.success = table.CreateIfNotExistsAsync().Result; // return false and true. if false then the table denied, else its created
-            //Store the table name in the ViewBag to show in the front-end
-            ViewBag.TableName = table.Name;
-            return View(); // comes out with the interface
+            CloudTable tableReference = GetTableInformation();
+            ViewBag.success = tableReference.CreateIfNotExistsAsync().Result;
+            ViewBag.TableName = tableReference.Name;
+            return View();
         }
 
         public ActionResult ViewPublishAppointment(string id) // id = DoctorId

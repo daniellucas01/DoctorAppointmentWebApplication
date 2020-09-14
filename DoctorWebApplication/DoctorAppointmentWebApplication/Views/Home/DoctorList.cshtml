@@ -9,7 +9,7 @@
 <center>
     <div class="input-group mb-3 pt-4">
         <div class="form-group col-md-12">
-            <form method="get" action="ListUsers">
+            <form method="get" action="DoctorList">
                 <div class="input-group mb-3">
                     <input type="text" value="" name="DoctorName" class="form-control" placeholder="Please enter a doctor's name">
                     <div class="input-group-append">
@@ -28,31 +28,28 @@
         <div class="row">
             @foreach (var user in Model)
             {
-                @if (user.Role.Equals("Doctor", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    <div class="col-sm-6 mt-2 mb-2">
-                        <div class="card border-dark">
-                            @{ 
-                                var imageLink = "";
-                                if (String.IsNullOrEmpty(user.ImageURL))
-                                {
-                                    imageLink = "~/Media/main-icon.svg";
-                                }
-                                else {
-                                    imageLink = user.ImageURL;
-                                }
+                <div class="col-sm-6 mt-2 mb-2">
+                    <div class="card border-dark">
+                        @{ 
+                            var imageLink = "";
+                            if (String.IsNullOrEmpty(user.ImageURL))
+                            {
+                                imageLink = "~/Media/main-icon.svg";
                             }
-                            <img class="card-img-top" src="@imageLink" height="400"/>
-                            <div class="card-body border-dark">
-                                <h5 class="card-title">@user.Name</h5>
-                                <p class="card-text">Doctor at Intelligent Hospital</p>
-                                <p class="card-text">@user.PhoneNumber</p>
-                                <a class="btn btn-primary text-right" asp-action="ViewPublishAppointment" asp-route-id="@user.Id" asp-route-name="@user.Name" asp-route-phone-number="@user.PhoneNumber">Book Appointment</a>
-                            </div>
+                            else {
+                                imageLink = user.ImageURL;
+                            }
+                        }
+                        <img class="card-img-top" src="@imageLink" height="400"/>
+                        <div class="card-body border-dark">
+                            <h5 class="card-title">@user.Name</h5>
+                            <p class="card-text">Doctor at Intelligent Hospital</p>
+                            <p class="card-text">@user.PhoneNumber</p>
+                            <a class="btn btn-primary text-right" asp-action="ViewPublishAppointment" asp-route-id="@user.Id" asp-route-name="@user.Name" asp-route-phone-number="@user.PhoneNumber">Book Appointment</a>
                         </div>
                     </div>
-                    <br/>
-                }
+                </div>
+                <br/>
             }
         </div>
     </div>

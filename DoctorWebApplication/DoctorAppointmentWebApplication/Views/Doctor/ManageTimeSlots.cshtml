@@ -57,7 +57,7 @@
                                     Deleting the appointment will delete the appointment session made previously by you as a user.
                                 </div>
                                 <div class="modal-footer">
-                                    <form asp-action="DeleteTimeSlots" asp-route-userid="@timeSlots.PartitionKey" asp-route-rowkey="@timeSlots.RowKey" asp-route-created-by="@timeSlots.CreatedBy"><button class="btn btn-danger" type="submit">Delete Appointment</button></form>
+                                    <form asp-action="DeleteTimeSlots" asp-route-rowkey="@timeSlots.RowKey"><button class="btn btn-danger" type="submit">Delete Appointment</button></form>
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                                 </div>
                             </div>

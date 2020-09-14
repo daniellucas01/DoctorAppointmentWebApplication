@@ -81,30 +81,28 @@ namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account.Manage
 
         private CloudBlobContainer GetBlobStorageInformation()
         {
-            //read json
+            // Linking the appsettings.json file in order to retrieve the connection string of blob storage
             var builder = new ConfigurationBuilder()
                             .SetBasePath(Directory.GetCurrentDirectory())
                             .AddJsonFile("appsettings.json");
             IConfigurationRoot configure = builder.Build();
 
-            //to get key access
-            //once link, time to read the content to get the connectiontring
-            CloudStorageAccount objectaccount =
-                CloudStorageAccount.Parse(configure["Connectionstrings:AzureStorageConnection"]);
-
+            // Linking the storage through connection string
+            CloudStorageAccount objectaccount = CloudStorageAccount
+                .Parse(configure["Connectionstrings:AzureStorageConnection"]);
             CloudBlobClient blobclientagent = objectaccount.CreateCloudBlobClient();
 
-            //step 2 : how to create a new container in the blob storage account
+            // Referencing a container on the blob storage
             CloudBlobContainer container = blobclientagent.GetContainerReference("user-profile-picture");
-
             return container;
         }
+
         private void UploadBlob(IFormFile files, string fileName)
         {
-            //step 1: grab the storage account and container information
+            // Grabbing the storage account and container information to begin the process
             CloudBlobContainer container = GetBlobStorageInformation();
 
-            //step 2: give a name for the blob
+            // Give the name for the blob or the file
             CloudBlockBlob blob = container.GetBlockBlobReference(fileName);
 
             //step 3: start to upload a static picture from pc to storage

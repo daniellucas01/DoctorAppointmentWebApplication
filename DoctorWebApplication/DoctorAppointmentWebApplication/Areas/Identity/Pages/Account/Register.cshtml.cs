@@ -127,15 +127,16 @@ namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account
 
             return container;
         }
+
         private void UploadBlob(IFormFile files, string fileName)
         {
-            //step 1: grab the storage account and container information
+            // Grabbing the storage account and container information to begin the process
             CloudBlobContainer container = GetBlobStorageInformation();
 
-            //step 2: give a name for the blob
+            // Give the name for the blob or the file
             CloudBlockBlob blob = container.GetBlockBlobReference(fileName + ".jpg");
 
-            //step 3: start to upload a static picture from pc to storage
+            // Uploading the file from the personal computer to blob storage
             using (var fileStream = files.OpenReadStream())
             {
                 blob.UploadFromStreamAsync(fileStream).Wait();

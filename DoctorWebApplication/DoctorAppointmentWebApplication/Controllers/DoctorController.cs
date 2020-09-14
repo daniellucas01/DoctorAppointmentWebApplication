@@ -31,28 +31,24 @@ namespace DoctorAppointmentWebApplication.Controllers
         private DoctorAppointmentWebApplicationContext _application;
 
 
-        //Connection
         private CloudTable GetTableInformation()
         {
 
-            //link the appsettings.json to get the access key
-            var builder = new ConfigurationBuilder()
-                                 .SetBasePath(Directory.GetCurrentDirectory())
-                                 .AddJsonFile("appsettings.json");
+            // Linking the appsettings.json file in order to retrieve the connection string of table storage
+            var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json");
             IConfigurationRoot configure = builder.Build();
 
-            //link storage account with access key
-            CloudStorageAccount storageaccount =
-                CloudStorageAccount.Parse(configure["ConnectionStrings:AzureStorageConnection"]);
+            // Linking the storage through connection string
+            CloudStorageAccount storageaccount = CloudStorageAccount.
+                Parse(configure["ConnectionStrings:AzureStorageConnection"]);
 
             CloudTableClient tableClient = storageaccount.CreateCloudTableClient();
 
-
-            //create the table
+            // Creating the table reference
             CloudTable table = tableClient.GetTableReference("AppointmentTable");
 
             return table;
-
         }
 
         public DoctorController(UserManager<DoctorAppointmentWebApplicationUser> userManager, DoctorAppointmentWebApplicationContext application)
@@ -86,7 +82,6 @@ namespace DoctorAppointmentWebApplication.Controllers
             CloudTable table = GetTableInformation();
 
             string uniqueRowKey = Guid.NewGuid().ToString("N");
-
             var utcDate = DateTime.SpecifyKind(myDate, DateTimeKind.Utc);
             var utcTime = DateTime.SpecifyKind(myTime, DateTimeKind.Utc);
 
@@ -104,9 +99,7 @@ namespace DoctorAppointmentWebApplication.Controllers
             try
             {
                 TableOperation tableOperation = TableOperation.Insert(insertTable);
-                TableResult result = table.ExecuteAsync(tableOperation).Result; // Toshows the result to the front-end
                 table.ExecuteAsync(tableOperation);
-                ViewBag.TableName = table.Name;
                 ViewBag.msg = "Insert Success!";
                 return RedirectToAction("ManageTimeSlots");
             }
@@ -158,12 +151,8 @@ namespace DoctorAppointmentWebApplication.Controllers
         public IActionResult DeleteTimeSlots(string rowkey)
         {
             CloudTable appointmentTable = GetTableInformation();
-            if (!String.IsNullOrEmpty(HttpContext.Request.Query["rowkey"]))
-            {
-                rowkey = HttpContext.Request.Query["rowkey"];
-            }
             TableOperation deleteAction = TableOperation.Delete(new AppointmentEntity("Appointment", rowkey) { ETag = "*" });
-            TableResult deleteResult = appointmentTable.ExecuteAsync(deleteAction).Result;
+            appointmentTable.ExecuteAsync(deleteAction);
             return RedirectToAction("ManageTimeSlots", "Doctor");
         }
 
@@ -316,13 +305,7 @@ namespace DoctorAppointmentWebApplication.Controllers
             return View(updateEntity);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> EditAppointment(string PartitionKey, string RowKey, DateTime AppointmentDate, DateTime AppointmentTime)
-        {
-            bool hasChanged = false;
-            CloudTable table = GetTableInformation();
-
-            // Create a retrieve operation that takes a item entity
+        /*// Create a retrieve operation that takes a item entity
             TableOperation retrieveOperation = TableOperation.Retrieve<AppointmentEntity>(PartitionKey, RowKey);
             //Execute the operation
             TableResult retrievedResult = await table.ExecuteAsync(retrieveOperation);
@@ -354,7 +337,18 @@ namespace DoctorAppointmentWebApplication.Controllers
                 {
                     Trace.WriteLine("No Changes");
                 }
-            }
+            }*/
+
+        [HttpPost]
+        public async Task<IActionResult> EditAppointment(AppointmentEntity updateEntity)
+        {
+            CloudTable table = GetTableInformation();
+            
+            updateEntity.AppointmentDate = DateTime.SpecifyKind(updateEntity.AppointmentDate, DateTimeKind.Utc);
+            updateEntity.AppointmentTime = DateTime.SpecifyKind(updateEntity.AppointmentTime, DateTimeKind.Utc);
+
+            TableOperation insertOrReplaceOperation = TableOperation.Replace(updateEntity);
+            await table.ExecuteAsync(insertOrReplaceOperation);
             return RedirectToAction("ViewBookedAppointment", "Doctor");
         }
 
