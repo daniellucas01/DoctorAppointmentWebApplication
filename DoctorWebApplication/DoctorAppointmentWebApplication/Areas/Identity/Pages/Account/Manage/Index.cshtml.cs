@@ -34,6 +34,7 @@ namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account.Manage
         public string Name { get; set; }
         public string DateOfBirth { get; set; }
         public string Role { get; set; }
+        public string userImageURL { get; set; }
 
         [TempData]
         public string StatusMessage { get; set; }
@@ -59,7 +60,8 @@ namespace DoctorAppointmentWebApplication.Areas.Identity.Pages.Account.Manage
             Name = user.Name;
             DateOfBirth = user.DateOfBirth.ToString("dd MMM yyyy", CultureInfo.InvariantCulture);
             Role = user.Role;
-            
+            userImageURL = user.ImageURL;
+
 
             Input = new InputModel
             {
