@@ -25,17 +25,9 @@ namespace DoctorAppointmentWebApplication.Controllers
     [Authorize(Roles = "Patient")]
     public class HomeController : Controller
     {
-        const string ServiceBusConnectionString = "Endpoint=sb://intelligent-appointment.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=56CeLsG3ZgEKnMjjGn2LAuFbCQQebgb0PiXdLAuIvvQ=";
         static IQueueClient queueClient;
         private readonly UserManager<DoctorAppointmentWebApplicationUser> userManager;
         private DoctorAppointmentWebApplicationContext _application;
-
-        /*private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }*/
 
         public HomeController(UserManager<DoctorAppointmentWebApplicationUser> userManager, DoctorAppointmentWebApplicationContext application)
         {
@@ -79,13 +71,8 @@ namespace DoctorAppointmentWebApplication.Controllers
         public ActionResult BookAppointment(string id)
         {
             string text = "Doctor Data = ";
-            /*string id = "";*/
             string name = "";
             string doctorPhoneNumber = "";
-            /*if (!String.IsNullOrEmpty(RouteData.Values["id"].ToString()))
-            {
-                id = HttpContext.Request.Query["id"];
-            }*/
             if (!String.IsNullOrEmpty(HttpContext.Request.Query["name"]))
             {
                 name = HttpContext.Request.Query["name"];
@@ -107,9 +94,7 @@ namespace DoctorAppointmentWebApplication.Controllers
                 ViewBag.phoneNumber = user.Result.PhoneNumber;
                 ViewBag.userName = user.Result.Name;
             }
-
             return View();
-            // Container
         }
 
         [HttpPost]
@@ -127,8 +112,6 @@ namespace DoctorAppointmentWebApplication.Controllers
             patient.PatientNumber = myPhoneNumber;
             patient.CreatedBy = "Patient";
             patient.CoronaRisk = coronaRisk;
-
-            /*queueClient = new QueueClient(ServiceBusConnectionString, QueueName);*/
 
             // Specify the Time Zone to prevent Table Storage to convert the Date Time to UTC
             var utcDate = DateTime.SpecifyKind(myDate, DateTimeKind.Utc); 
@@ -168,7 +151,7 @@ namespace DoctorAppointmentWebApplication.Controllers
 
         public async Task sendMessageAsync(string QueueName, string myUserName, string utcDate, string utcTime, string coronaRisk)
         {
-            queueClient = new QueueClient(RetrieveAzureServiceBusConnection(), "18e39f84-332c-4019-85ac-ecb669eeb0d7");
+            queueClient = new QueueClient(RetrieveAzureServiceBusConnection(), QueueName);
             try
             {
                     string messageBody = $"Message {myUserName + " has request for an appointment on " + utcDate + " " + utcTime + ". This patient has " + coronaRisk + "Corona Risk"}";
@@ -192,11 +175,9 @@ namespace DoctorAppointmentWebApplication.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        //-------------- Storage account set up ---------------------
-
+        // -------------- Storage account set up --------------------- //
         private CloudTable GetTableInformation()
         {
-
             //link the appsettings.json to get the access key
             var builder = new ConfigurationBuilder()
                                  .SetBasePath(Directory.GetCurrentDirectory())
@@ -209,12 +190,10 @@ namespace DoctorAppointmentWebApplication.Controllers
 
             CloudTableClient tableClient = storageaccount.CreateCloudTableClient();
 
-
-            //create the table
+            // Create the table
             CloudTable table = tableClient.GetTableReference("AppointmentTable");
 
             return table;
-
         }
 
         public ActionResult ViewAppointment()
@@ -443,25 +422,12 @@ namespace DoctorAppointmentWebApplication.Controllers
 
             // Create a retrieve operation that takes a item entity
             TableOperation retrieveOperation = TableOperation.Retrieve<AppointmentEntity>(id, rowkey);
+
             //Execute the operation
             TableResult retrievedResult = await table.ExecuteAsync(retrieveOperation);
 
             // Assign the result to a Item object.
             AppointmentEntity updateEntity = (AppointmentEntity)retrievedResult.Result;
-
-            /*if (updateEntity != null)
-            {
-                //Change the description
-                updateEntity.Description = "in nos";
-
-                // Create the InsertOrReplace TableOperation
-                TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);
-
-                // Execute the operation.
-                table.Execute(insertOrReplaceOperation);
-                Console.WriteLine("Entity was updated.");
-            }*/
-
 
             return View(updateEntity);
         }
@@ -507,35 +473,5 @@ namespace DoctorAppointmentWebApplication.Controllers
             }
             return View();
         }
-        
-       /* public ActionResult CreateTableProcess(string myDoctorID, string myDoctorName, string myUserName, string myUserID,string myPhoneNumber, DateTime myDate, DateTime myTime)
-        {
-            CloudTable table = GetTableInformation();
-
-            AppointmentEntity patient = new AppointmentEntity(myUserID, myDoctorID);
-            patient.CustomerName = myUserName;
-            patient.DoctorName = myDoctorName;
-            patient.AppointmentDate = myDate;
-            patient.AppointmentTime = myTime;
-            patient.PatientNumber = myPhoneNumber;
-            try
-            {
-                TableOperation tableOperation = TableOperation.Insert(patient);
-
-                TableResult result = table.ExecuteAsync(tableOperation).Result;//toshows the result to the front-end
-                table.ExecuteAsync(tableOperation);
-                ViewBag.TableName = table.Name;
-                ViewBag.msg = "Insert Success!";
-            }
-            catch (Exception ex)
-            {
-                ViewBag.msg = "Unable to insert the data. Error :" + ex.ToString();
-            }
-
-
-
-            return View();
-        }
-        */
     }
 }

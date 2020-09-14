@@ -23,8 +23,6 @@ namespace DoctorAppointmentWebApplication.Controllers
     [Authorize(Roles = "Doctor")]
     public class DoctorController : Controller
     {
-        const string ServiceBusConnectionString = "Endpoint=sb://azureservicebustp047067.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=27AeQCdxa6yeB3QzMTfmALnX+gdDWwvF/5sUiUdCgAs=";
-        /*const string QueueName = "18e39f84-332c-4019-85ac-ecb669eeb0d7";*/
         static IQueueClient queueClient;
         static List<string> notifications;
         private readonly UserManager<DoctorAppointmentWebApplicationUser> userManager;
@@ -124,10 +122,7 @@ namespace DoctorAppointmentWebApplication.Controllers
                     .Where(TableQuery.CombineFilters(TableQuery.GenerateFilterCondition("DoctorID", QueryComparisons.Equal, userId),
                            TableOperators.And,
                            TableQuery.GenerateFilterCondition("CreatedBy", QueryComparisons.Equal, "Doctor")));
-
-
                 TableContinuationToken token = null;
-
                 do
                 {
                     TableQuerySegment<AppointmentEntity> result = appointmentTable.ExecuteQuerySegmentedAsync(query, token).Result;
@@ -212,10 +207,6 @@ namespace DoctorAppointmentWebApplication.Controllers
             return RedirectToAction("ManageTimeSlots", "Doctor");
         }
 
-
-        //============================================
-
-        // View Appointment of the Booked
         public ActionResult ViewBookedAppointment()
         {
             CloudTable appointmentTable = GetTableInformation();
@@ -255,10 +246,6 @@ namespace DoctorAppointmentWebApplication.Controllers
         public ActionResult DeleteAppointment(string rowkey)
         {
             Trace.WriteLine("Delete is clicked" + rowkey);
-            /*if (!String.IsNullOrEmpty(HttpContext.Request.Query["rowkey"]))
-            {
-                rowkey = HttpContext.Request.Query["rowkey"];
-            }*/
 
             CloudTable appointmentTable = GetTableInformation();
             var msg = "";
@@ -282,62 +269,15 @@ namespace DoctorAppointmentWebApplication.Controllers
 
             // Create a retrieve operation that takes a item entity
             TableOperation retrieveOperation = TableOperation.Retrieve<AppointmentEntity>("Appointment", rowkey);
+
             //Execute the operation
             TableResult retrievedResult = await table.ExecuteAsync(retrieveOperation);
 
             // Assign the result to a Item object.
             AppointmentEntity updateEntity = (AppointmentEntity)retrievedResult.Result;
-
-            /*if (updateEntity != null)
-            {
-                //Change the description
-                updateEntity.Description = "in nos";
-
-                // Create the InsertOrReplace TableOperation
-                TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);
-
-                // Execute the operation.
-                table.Execute(insertOrReplaceOperation);
-                Console.WriteLine("Entity was updated.");
-            }*/
-
 
             return View(updateEntity);
         }
-
-        /*// Create a retrieve operation that takes a item entity
-            TableOperation retrieveOperation = TableOperation.Retrieve<AppointmentEntity>(PartitionKey, RowKey);
-            //Execute the operation
-            TableResult retrievedResult = await table.ExecuteAsync(retrieveOperation);
-
-            // Assign the result to a Item object.
-            AppointmentEntity updateEntity = (AppointmentEntity)retrievedResult.Result;
-
-            if (updateEntity != null)
-            {
-                //Change the description
-                if (updateEntity.AppointmentDate != AppointmentDate || updateEntity.AppointmentTime != AppointmentTime)
-                {
-                    hasChanged = true;
-                }
-                if (hasChanged)
-                {
-                    var appointmentDate = DateTime.SpecifyKind(AppointmentDate, DateTimeKind.Utc);
-                    updateEntity.AppointmentDate = appointmentDate;
-                    var appointmentTime = DateTime.SpecifyKind(AppointmentTime, DateTimeKind.Utc);
-                    updateEntity.AppointmentTime = appointmentTime;
-                    // Create the InsertOrReplace TableOperation
-                    TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);
-
-                    // Execute the operation.
-                    await table.ExecuteAsync(insertOrReplaceOperation);
-                    Trace.WriteLine("Entity was updated.");
-                }
-                else
-                {
-                    Trace.WriteLine("No Changes");
-                }
-            }*/
 
         [HttpPost]
         public async Task<IActionResult> EditAppointment(AppointmentEntity updateEntity)
@@ -354,21 +294,16 @@ namespace DoctorAppointmentWebApplication.Controllers
 
         public string RetrieveAzureServiceBusConnection()
         {
-            //read json
             var builder = new ConfigurationBuilder()
                             .SetBasePath(Directory.GetCurrentDirectory())
                             .AddJsonFile("appsettings.json");
             IConfigurationRoot configure = builder.Build();
-
-            //to get key access
-            //once link, time to read the content to get the connectiontring
             return configure["Connectionstrings:ServiceBusConnection"];
         }
 
         public async Task<IActionResult> ReceiveNotification()
         {
-            // var QueueName = userManager.GetUserId(HttpContext.User);
-            var QueueName = "18e39f84-332c-4019-85ac-ecb669eeb0d7";
+            var QueueName = userManager.GetUserId(HttpContext.User);
             notifications = new List<string>();
             await Task.Factory.StartNew(() =>
             {
@@ -384,7 +319,6 @@ namespace DoctorAppointmentWebApplication.Controllers
         }
 
         // Receiving message from service bus
-
         private static async Task ExecuteMessageProcessing(Message message, CancellationToken token)
         {
             // To check the received message on console
