@@ -86,7 +86,7 @@ namespace DoctorAppointmentWebApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult BookAppointment(string myDoctorName,string myDoctorID, string myUserName, string myUserID, string myPhoneNumber, DateTime myDate, DateTime myTime, string myDoctorPhoneNumber, string coronaRisk)
+        public async Task<IActionResult> BookAppointmentAsync(string myDoctorName,string myDoctorID, string myUserName, string myUserID, string myPhoneNumber, DateTime myDate, DateTime myTime, string myDoctorPhoneNumber, string coronaRisk)
         {
             CloudTable table = GetTableInformation();
 
@@ -111,10 +111,11 @@ namespace DoctorAppointmentWebApplication.Controllers
                 TableOperation tableOperation = TableOperation.Insert(patient);
 
                 TableResult result = table.ExecuteAsync(tableOperation).Result;//toshows the result to the front-end
-                table.ExecuteAsync(tableOperation);
+                await table.ExecuteAsync(tableOperation);
                 ViewBag.TableName = table.Name;
                 ViewBag.msg = "Insert Success!";
-                sendMessageAsync(myDoctorID, myUserName, utcDate.ToString(), utcTime.ToString(), coronaRisk);
+                Trace.WriteLine("SENDING MESSAGE TO THIS DOCTOR ID " + myDoctorID);
+                await sendMessageAsync(myDoctorID, myUserName, utcDate.ToString(), utcTime.ToString(), coronaRisk);
                 return RedirectToAction("DoctorList", "Home");
             }
             catch (Exception ex)
@@ -140,6 +141,7 @@ namespace DoctorAppointmentWebApplication.Controllers
         public async Task sendMessageAsync(string QueueName, string myUserName, string utcDate, string utcTime, string coronaRisk)
         {
             queueClient = new QueueClient(RetrieveAzureServiceBusConnection(), QueueName);
+            Trace.WriteLine("CONNECTION STRING : " + RetrieveAzureServiceBusConnection() + "\n" + QueueName);
             try
             {
                     string messageBody = $"Message {myUserName + " has request for an appointment on " + utcDate + " " + utcTime + ". This patient has " + coronaRisk + "Corona Risk"}";
@@ -392,7 +394,8 @@ namespace DoctorAppointmentWebApplication.Controllers
 
                 // Execute the operation.
                 await table.ExecuteAsync(insertOrReplaceOperation);
-                sendMessageAsync(doctorId, user.Result.Name,updateEntity.AppointmentDate.ToString(), updateEntity.AppointmentTime.ToString() ,coronaRisk);
+                Trace.WriteLine("SENDING MESSAGE TO THIS DOCTOR ID " + doctorId);
+                await sendMessageAsync(doctorId, user.Result.Name, updateEntity.AppointmentDate.ToString(), updateEntity.AppointmentTime.ToString(), coronaRisk);
             }
             Console.WriteLine("Appointment is booked");
             return RedirectToAction("ViewAppointment", "Home");
