@@ -86,7 +86,7 @@ namespace DoctorAppointmentWebApplication.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> BookAppointmentAsync(string myDoctorName,string myDoctorID, string myUserName, string myUserID, string myPhoneNumber, DateTime myDate, DateTime myTime, string myDoctorPhoneNumber, string coronaRisk)
+        public IActionResult BookAppointment(string myDoctorName,string myDoctorID, string myUserName, string myUserID, string myPhoneNumber, DateTime myDate, DateTime myTime, string myDoctorPhoneNumber, string coronaRisk)
         {
             CloudTable table = GetTableInformation();
 
@@ -111,7 +111,7 @@ namespace DoctorAppointmentWebApplication.Controllers
                 TableOperation tableOperation = TableOperation.Insert(patient);
 
                 TableResult result = table.ExecuteAsync(tableOperation).Result;//toshows the result to the front-end
-                await table.ExecuteAsync(tableOperation);
+                table.ExecuteAsync(tableOperation);
                 ViewBag.TableName = table.Name;
                 ViewBag.msg = "Insert Success!";
                 Trace.WriteLine("SENDING MESSAGE TO THIS DOCTOR ID " + myDoctorID);
