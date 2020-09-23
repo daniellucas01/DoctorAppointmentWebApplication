@@ -115,7 +115,7 @@ namespace DoctorAppointmentWebApplication.Controllers
                 ViewBag.TableName = table.Name;
                 ViewBag.msg = "Insert Success!";
                 Trace.WriteLine("SENDING MESSAGE TO THIS DOCTOR ID " + myDoctorID);
-                await sendMessageAsync(myDoctorID, myUserName, utcDate.ToString(), utcTime.ToString(), coronaRisk);
+                //await sendMessageAsync(myDoctorID, myUserName, utcDate.ToString(), utcTime.ToString(), coronaRisk);
                 return RedirectToAction("DoctorList", "Home");
             }
             catch (Exception ex)
